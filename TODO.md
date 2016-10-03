@@ -20,3 +20,9 @@
 - [ ] A user without an encrypted home directory (e.g. root with the correct password)
 - [ ] The above case but with a mistyped password
 - [ ] A non-existent user (e.g. blah)
+
+## Notes
+
+### Create shared library with go code
+
+go build -o libpamela.so -buildmode=c-shared pamela.go
