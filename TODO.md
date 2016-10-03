@@ -1,11 +1,17 @@
 ## Partie obligatoire
 
 - [ ] Open an encrypted volume in user's home folder when user log in
+	- [ ] To make a mount set userid to 0 (root) in order to mount a volume
+	- [ ] Detect that the user has not mounted the directory yet
+	- [ ] If a user is logged in twice, it is important that the user's home directory is not unmounted the first time the user logs out.
 - [ ] When user log out, close the volume
 
 ## Bonus
 
-- [ ] Handle a debug flag in our module
+- [ ] Handle a debug flag in our module (talk to syslog)
+- [ ] Create a config file
+	- [ ] Specify where the volume is regarding the user
+	- [ ] Say if the encrypted volume password is different from the user session password
 
 ## Test cases
 
