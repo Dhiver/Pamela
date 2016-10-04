@@ -1,4 +1,4 @@
-## Partie obligatoire
+## Mandatory part
 
 - [ ] Open an encrypted volume in user's home folder when user log in
 	- [ ] To make a mount set userid to 0 (root) in order to mount a volume
@@ -20,6 +20,19 @@
 - [ ] A user without an encrypted home directory (e.g. root with the correct password)
 - [ ] The above case but with a mistyped password
 - [ ] A non-existent user (e.g. blah)
+
+## PAM part
+
+- [ ] Ask Adrien to add tasks
+
+## Encryption part
+
+- [ ] Specify used cipher
+- [ ] Specify key size
+- [ ] Specify hash
+- [ ] Specify iter time
+- [ ] Specify RNG
+- [ ] Ask passphrase
 
 ## Compile
 
