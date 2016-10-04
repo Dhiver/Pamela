@@ -27,12 +27,15 @@
 
 ## Encryption part
 
-- [ ] Specify used cipher
-- [ ] Specify key size
-- [ ] Specify hash
-- [ ] Specify iter time
-- [ ] Specify RNG
-- [ ] Ask passphrase
+- [ ] Check if valid LUKS header (by *hand*)
+- [ ] Create container
+	- [ ] Specify used cipher
+	- [ ] Specify key size
+	- [ ] Specify hash
+	- [ ] Specify iter time
+	- [ ] Specify RNG
+	- [ ] Ask passphrase
+- [ ] Delete container
 
 ## Compile
 
