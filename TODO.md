@@ -21,8 +21,9 @@
 - [ ] The above case but with a mistyped password
 - [ ] A non-existent user (e.g. blah)
 
-## Notes
+## Compile
 
-### Create shared library with go code
-
-go build -o libpamela.so -buildmode=c-shared pamela.go
+```bash
+gcc -fPIC -c pam_module.c
+gcc -shared -o pam_module.so pam_module.o -lpam
+```
