@@ -21,13 +21,21 @@
 - [ ] The above case but with a mistyped password
 - [ ] A non-existent user (e.g. blah)
 
+## Arch
+
+/home/<user>/.pamela_vault/
+	config
+
 ## PAM part
 
-- [ ] Ask Adrien to add tasks
+- [ ] pam_conv()
+- [ ] Be able to decrypt volume with the user password
+- [ ] Determine if user close the last session
 
 ## Encryption part
 
 - [ ] Check if valid LUKS header (by *hand*)
+- [ ] Open existing container
 - [ ] Create container
 	- [ ] Specify used cipher
 	- [ ] Specify key size
