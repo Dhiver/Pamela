@@ -10,10 +10,11 @@
 #define SECRET_DIR ".pamela_vault"
 #define PASSWORD_ENV "volume_password"
 
-int authenticate(pam_handle_t *pamh) {
+PAM_EXTERN int
+pam_sm_authenticate(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv) {
     char *password = NULL;
 
-    printf("authenticate\n");
+    printf("pam_sm_authenticate\n");
     if (pam_get_item(pamh, PAM_AUTHTOK, (void *)&password) != PAM_SUCCESS) {
         return PAM_IGNORE;
     }
@@ -23,7 +24,8 @@ int authenticate(pam_handle_t *pamh) {
     return PAM_SUCCESS;
 }
 
-int open_session(pam_handle_t *pamh) {
+PAM_EXTERN int
+pam_sm_open_session(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv) {
     const char      *user;
     const char      *password;
     struct passwd   *pwd;
@@ -49,22 +51,26 @@ int open_session(pam_handle_t *pamh) {
     return (PAM_SUCCESS);
 }
 
-int close_session(UNUSED pam_handle_t *pamh) {
+PAM_EXTERN int
+pam_sm_close_session(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv) {
     //TODO check if last user
     return (PAM_SUCCESS);
 }
 
-int setcred(UNUSED pam_handle_t *pamh) {
-    printf("setcred\n");
+PAM_EXTERN int
+pam_sm_setcred(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv) {
+    printf("pam_sm_setcred\n");
     return (PAM_SUCCESS);
 }
 
-int acct_mgmt(UNUSED pam_handle_t *pamh) {
-    printf("acct_mgmt\n");
+PAM_EXTERN int
+pam_sm_acct_mgmt(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv) {
+    printf("pam_sm_acct_mgmt\n");
     return (PAM_SUCCESS);
 }
 
-int chauthtok(UNUSED pam_handle_t *pamh) {
-    printf("chauthtok\n");
+PAM_EXTERN int
+pam_sm_chauthtok(UNUSED pam_handle_t *pamh, UNUSED int flags, UNUSED int argc, UNUSED const char **argv) {
+    printf("pam_sm_chauthtok\n");
     return (PAM_SUCCESS);
 }

@@ -1,0 +1,10 @@
+{
+    "container1": {
+        "mountDir": "container1",
+        "userPassword": true
+    },
+    "container2": {
+        "mountDir": "/tmp",
+        "userPassword": false
+    }
+}
