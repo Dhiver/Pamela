@@ -54,4 +54,8 @@
 aptitude install libpam-python
 gcc -fPIC -c pam_module.c
 gcc -shared -o pam_module.so pam_module.o -lpam
+
+auth required /tmp/pam_module.so
+session required /tmp/pam_module.so
 ```
+
