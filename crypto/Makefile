@@ -8,6 +8,8 @@ CFLAGS	+= -fPIC
 
 SRCF	= src/
 
+LIBS	= -lcryptsetup -lsystemd
+
 NAME	= libjeankevincrypto.so
 
 SRCS	= $(SRCF)is_luks.c
@@ -16,7 +18,7 @@ OBJS	= $(SRCS:.c=.o)
 
 
 $(NAME): $(OBJS)
-	$(CC) -shared -o $(NAME) $(OBJS) -lcryptsetup
+	$(CC) -shared -o $(NAME) $(OBJS) $(LIBS)
 
 all: $(NAME)
 
