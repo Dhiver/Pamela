@@ -48,6 +48,7 @@
 ## Compile
 
 ```bash
+aptitude install libpam-python
 gcc -fPIC -c pam_module.c
 gcc -shared -o pam_module.so pam_module.o -lpam
 ```
