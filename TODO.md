@@ -24,6 +24,8 @@
 ## Arch
 
 /home/<user>/.pamela_vault/
+	container1
+	container2
 	config
 
 ## PAM part
@@ -34,6 +36,7 @@
 
 ## Encryption part
 
+- [ ] Add a Makefile to create a crypto shared lib
 - [ ] Check if valid LUKS header (by *hand*)
 - [ ] Open existing container
 - [ ] Create container
