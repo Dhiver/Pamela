@@ -3,4 +3,5 @@ a.out
 *.so
 .idea/
 CMakeLists.txt
-crypto/build/
+build/
+__pycache__/
