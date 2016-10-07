@@ -1,5 +1,6 @@
 a.out
 *.o
 *.so
-.idea
+.idea/
 CMakeLists.txt
+crypto/build/
