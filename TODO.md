@@ -8,7 +8,26 @@
 
 ## Bonus
 
-- [ ] Handle a debug flag in our module (talk to syslog)
+- [ ] Handle a debug flag in our module (talk to systemd)
+```c
+/* Don't forget the -lsystemd */
+#include <systemd/sd-journal.h>
+
+sd_journal_print(LOG_NOTICE, "Hello World");
+}
+```
+
+```python
+# See https://www.freedesktop.org/software/systemd/python-systemd/journal.html
+import logging
+from systemd.journal import JournalHandler
+
+log = logging.getLogger('demo')
+log.addHandler(JournalHandler())
+log.setLevel(logging.INFO)
+log.info("sent to journal")
+```
+
 - [ ] Create a config file
 	- [ ] Specify where the volume is regarding the user
 	- [ ] Say if the encrypted volume password is different from the user session password
@@ -30,25 +49,20 @@
 
 ## PAM part
 
-- [ ] pam_conv()
 - [ ] Be able to decrypt volume with the user password
 - [ ] Determine if user close the last session
 
 ## Encryption part
 
-- [ ] Add a Makefile to create a crypto shared lib
-- [ ] Check if valid LUKS header (by *hand*)
 - [ ] Open existing container
+- [ ] Close container
 - [ ] Create container
-	- [ ] Specify used cipher
-	- [ ] Specify key size
-	- [ ] Specify hash
-	- [ ] Specify iter time
-	- [ ] Specify RNG
-	- [ ] Ask passphrase
+	- [ ] With 2 profiles (newbie / paranoia)
 - [ ] Delete container
 
-## Compile
+## Compiling
+
+### PAM related
 
 ```bash
 aptitude install libpam-python
@@ -59,3 +73,7 @@ auth required /tmp/pam_module.so
 session required /tmp/pam_module.so
 ```
 
+### Crypto related
+```bash
+python3 setup.py
+```
