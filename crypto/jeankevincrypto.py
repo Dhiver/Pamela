@@ -30,6 +30,21 @@ def mount(source, target, fs):
                   .format(source, fs, target))
     return True
 
+def umount(path):
+    ret = ctypes.CDLL('libc.so.6', use_errno=True).umount(
+        ctypes.c_char_p(path.encode()))
+    if ret != 0:
+        errno = ctypes.get_errno()
+        log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                       "Error umounting {} : {}"
+                      .format(path, os.strerror(errno)))
+        return False
+    log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+                   "Umounting {} succeed"
+                  .format(path))
+    return True
+    return True
+
 def log_to_systemd(level, msg="<log message is not available>"):
     logger.log(logLevels.get(level, logging.NOTSET),
                "{}".format(msg))

@@ -55,8 +55,8 @@ log.info("sent to journal")
 ## Encryption part
 
 - [x] Open existing container
-- [ ] Mount the container
-- [ ] Umount container
+- [x] Mount the container
+- [x] Umount container
 - [x] Close container
 - [ ] Create container
 	- [ ] With 2 profiles (newbie / paranoia)
