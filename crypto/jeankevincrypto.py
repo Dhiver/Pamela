@@ -5,6 +5,8 @@ import logging
 from systemd.journal import JournalHandler
 from pathlib import Path
 import hashlib
+import ctypes
+import os
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
@@ -12,6 +14,21 @@ logLevels = {
     pycryptsetup.CRYPT_LOG_NORMAL: logging.INFO,
     pycryptsetup.CRYPT_LOG_VERBOSE: logging.NOTSET
 }
+
+def mount(source, target, fs):
+    ret = ctypes.CDLL('libc.so.6', use_errno=True).mount(
+        ctypes.c_char_p(source.encode()), ctypes.c_char_p(target.encode()),
+        ctypes.c_char_p(fs.encode()), 0, 0)
+    if ret != 0:
+        errno = ctypes.get_errno()
+        log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                       "Error mounting {} ({}) on {}: {}"
+                      .format(source, fs, target, os.strerror(errno)))
+        return False
+    log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+                   "Mounting {} ({}) on {} succeed"
+                  .format(source, fs, target))
+    return True
 
 def log_to_systemd(level, msg="<log message is not available>"):
     logger.log(logLevels.get(level, logging.NOTSET),
