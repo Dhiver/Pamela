@@ -63,19 +63,42 @@ class LUKSDevice:
             self.c.activate(self.name, passphrase)
         except Exception as e:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR, e)
-            del self.c
             return False
 
-        if self.c.status != pycryptsetup.CRYPT_ACTIVE:
+        if self.c.status() != pycryptsetup.CRYPT_ACTIVE:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                           "Device {} was not activated".format(self.path))
-            del self.c
             return False
 
         log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
                        "Device {} activated as {}".format(self.path,
                                                           self.name))
         return True
+
+    def close(self):
+        """ Close a LUKS device """
+        if self.c.status() != pycryptsetup.CRYPT_ACTIVE:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Device {} is not active, can not close it".
+                          format(self.path))
+            return False
+
+        try:
+            self.c.deactivate()
+        except Exception as e:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Device {} cant be close: {}".format(
+                               self.path, e))
+            return False
+
+        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+                       "Device {} correctly closed".format(self.path))
+        return True
+
+    def __del__(self):
+        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+                       "Device {} object cleared".format(self.path))
+        del self.c
 
 logger = logging.getLogger('jeankevincrypto')
 logger.addHandler(JournalHandler())
