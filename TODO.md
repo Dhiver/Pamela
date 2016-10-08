@@ -54,10 +54,10 @@ log.info("sent to journal")
 
 ## Encryption part
 
-- [/] Open existing container
+- [x] Open existing container
 - [ ] Mount the container
 - [ ] Umount container
-- [ ] Close container
+- [x] Close container
 - [ ] Create container
 	- [ ] With 2 profiles (newbie / paranoia)
 	- [ ] Format to ext4 filesystem
