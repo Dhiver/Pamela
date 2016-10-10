@@ -3,6 +3,7 @@
 import pycryptsetup
 import logging
 from systemd.journal import JournalHandler
+from utils import get_abs_path, get_sha256_hexdigest
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
