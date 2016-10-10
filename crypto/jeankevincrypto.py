@@ -4,6 +4,7 @@ import pycryptsetup
 import logging
 from systemd.journal import JournalHandler
 from utils import get_abs_path, get_sha256_hexdigest
+import os
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
@@ -86,6 +87,52 @@ class LUKSDevice:
 
         log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
                        "Device {} correctly closed".format(self.path))
+        return True
+
+    def wipe(self):
+        """ Wipe a LUKS device by overwriting volume header
+        Implement section 5.4 of https://gitlab.com/cryptsetup/cryptsetup/wikis/FrequentlyAskedQuestions"""
+        if self.c.status() != pycryptsetup.CRYPT_INACTIVE:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Close the device {} before wiping".
+                          format(self.path))
+            return False
+
+        try:
+            size = os.path.getsize(self.path)
+        except Exception as e:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Error getting file ({}) size: {}".format(
+                               self.path, e))
+            return False
+
+        try:
+            with open(self.path, 'r+b') as f:
+                f.seek(0)
+                if size > 10 * 1024**2:
+                    size = 10 * 1024**2
+                f.write(b'0' * size)
+                f.flush()
+        except Exception as e:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Error overwritting luks header for {}: {}".format(
+                               self.path, e))
+            return False
+
+        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+                       "Device {} wiped".format(self.path))
+
+        try:
+            os.remove(self.path)
+        except Exception as e:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Error deleting file {}: {}".format(
+                               self.path, e))
+            return False
+
+        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+                       "Device {} removed".format(self.path))
+
         return True
 
     def __del__(self):
