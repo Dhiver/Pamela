@@ -3,8 +3,6 @@
 import pycryptsetup
 import logging
 from systemd.journal import JournalHandler
-from pathlib import Path
-import hashlib
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
@@ -17,12 +15,6 @@ def log_to_systemd(level, msg="<log message is not available>"):
     logger.log(logLevels.get(level, logging.NOTSET),
                "{}".format(msg))
     return
-
-def get_abs_path(filename):
-    return str(Path(filename).resolve())
-
-def get_sha256_hexdigest(string):
-    return hashlib.sha256(string.encode()).hexdigest()
 
 class LUKSDevice:
     """ LUKSDevice represents a LUKS device """
