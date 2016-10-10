@@ -10,10 +10,21 @@
 #define SECRET_DIR ".pamela_vault"
 #define PASSWORD_ENV "volume_password"
 
+const char  *get_password(pam_handle_t *pamh) {
+    return pam_getenv(pamh, PASSWORD_ENV);
+}
+
+const char  *get_user(pam_handle_t *pamh) {
+    const char      *user;
+
+    pam_get_user(pamh, &user, NULL);
+    return user;
+}
+
 int authenticate(pam_handle_t *pamh) {
     char *password = NULL;
 
-    printf("authenticate\n");
+    // printf("authenticate\n");
     if (pam_get_item(pamh, PAM_AUTHTOK, (void *)&password) != PAM_SUCCESS) {
         return PAM_IGNORE;
     }
@@ -40,7 +51,7 @@ int open_session(pam_handle_t *pamh) {
 //   check password
     //TODO check if password == volume_password
 //    if (password == NULL) {
-        pam_get_authtok(pamh, PAM_AUTHTOK, (void*)&password, "Password for unlock volume: ");
+        // pam_get_authtok(pamh, PAM_AUTHTOK, (void*)&password, "Password for unlock volume: ");
         //TODO check if password == volume_password
 //    }
 
