@@ -68,7 +68,7 @@ log.info("sent to journal")
 ### PAM related
 
 ```bash
-aptitude install libpam-python
+aptitude install build-essential libpam-python python3 libpam0g-dev python3-systemd libcryptsetup-dev
 gcc -fPIC -c pam_module.c
 gcc -shared -o pam_module.so pam_module.o -lpam
 

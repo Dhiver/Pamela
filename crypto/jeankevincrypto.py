@@ -1,28 +1,33 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
+import sys
+sys.path.append("/tmp/build/")
 
 import pycryptsetup
 import logging
-from systemd.journal import JournalHandler
+# from systemd.journal import JournalHandler
 from utils import get_abs_path, get_sha256_hexdigest
 import os
 
-logLevels = {
-    pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
-    pycryptsetup.CRYPT_LOG_ERROR: logging.ERROR,
-    pycryptsetup.CRYPT_LOG_NORMAL: logging.INFO,
-    pycryptsetup.CRYPT_LOG_VERBOSE: logging.NOTSET
-}
+# logLevels = {
+#     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
+#     pycryptsetup.CRYPT_LOG_ERROR: logging.ERROR,
+#     pycryptsetup.CRYPT_LOG_NORMAL: logging.INFO,
+#     pycryptsetup.CRYPT_LOG_VERBOSE: logging.NOTSET
+# }
 
 def log_to_systemd(level, msg="<log message is not available>"):
-    logger.log(logLevels.get(level, logging.NOTSET),
-               "{}".format(msg))
+    # logger.log(logLevels.get(level, logging.NOTSET),
+    #            "{}".format(msg))
     return
 
 class LUKSDevice:
     """ LUKSDevice represents a LUKS device """
 
     def __init__(self, path):
-        assert isinstance(path, str)
+        self.path = None
+        self.c = None
+        assert isinstance(path, basestring)
 
         try:
             self.path = get_abs_path(path)
@@ -61,7 +66,7 @@ class LUKSDevice:
 
         if self.c.status() != pycryptsetup.CRYPT_ACTIVE:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
-                          "Device {} was not activated".format(self.path))
+                           "Device {} was not activated".format(self.path))
             return False
 
         log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
@@ -74,7 +79,7 @@ class LUKSDevice:
         if self.c.status() != pycryptsetup.CRYPT_ACTIVE:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                            "Device {} is not active, can not close it".
-                          format(self.path))
+                           format(self.path))
             return False
 
         try:
@@ -95,7 +100,7 @@ class LUKSDevice:
         if self.c.status() != pycryptsetup.CRYPT_INACTIVE:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                            "Close the device {} before wiping".
-                          format(self.path))
+                           format(self.path))
             return False
 
         try:
@@ -140,6 +145,6 @@ class LUKSDevice:
                        "Device {} object cleared".format(self.path))
         del self.c
 
-logger = logging.getLogger('jeankevincrypto')
-logger.addHandler(JournalHandler())
-logger.setLevel(logging.DEBUG)
+# logger = logging.getLogger('jeankevincrypto')
+# logger.addHandler(JournalHandler())
+# logger.setLevel(logging.DEBUG)
