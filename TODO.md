@@ -58,9 +58,11 @@ log.info("sent to journal")
 - [x] Mount the container
 - [x] Umount container
 - [x] Close container
+- [ ] Init container
 - [ ] Create container
-	- [ ] With 2 profiles (newbie / paranoia)
+	- [ ] With 2 profiles (weak / normal)
 	- [ ] Format to ext4 filesystem
+- [ ] Resize a container
 - [ ] Delete container
 
 ## Compiling

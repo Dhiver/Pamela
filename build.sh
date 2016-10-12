@@ -9,7 +9,7 @@ rm -rf $buildDir
 rm -rf $cryptoDir/$buildDir
 rm -rf $cryptoDir/*.so
 mkdir -p $buildDir
-apt-get install build-essential python python-dev libcryptsetup-dev libpam0g-dev libpam-python
+apt-get install -y build-essential python python-dev libcryptsetup-dev libpam0g-dev libpam-python
 
 # build crypto
 python2 $cryptoDir/setup.py
