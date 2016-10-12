@@ -1,10 +1,13 @@
 {
     "container1": {
         "mountDir": "container1",
-        "userPassword": true
+        "userPassword": true,
+	"mode": "normal",
+	"size": 8
     },
     "container2": {
         "mountDir": "/tmp",
-        "userPassword": false
+        "userPassword": false,
+	"mode": "weak"
     }
 }
