@@ -57,7 +57,7 @@ def pam_sm_open_session(pamh, flags, argv):
         contain = jeankevincrypto.LUKSDevice(os.path.join(secret_dir, key))
         if contain.open(password) is False:
             print('Bad Password')
-        print(json.dumps(config[contain], indent=4, sort_keys=True))
+        print(json.dumps(config[key], indent=4, sort_keys=True))
     print(json.dumps(config, indent=4, sort_keys=True))
     print("Hello {} your secret directory is {}, and password {}").format(user, secret_dir, password)
     return pamh.PAM_SUCCESS
