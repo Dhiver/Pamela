@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:testing
 MAINTAINER Adrien WERY "adrien.wery@epitech.eu"
 
 ENV DEBIAN_FRONTEND noninteractive
