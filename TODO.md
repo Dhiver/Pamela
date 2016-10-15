@@ -14,26 +14,13 @@
 - [ ] The above case but with a mistyped password
 - [ ] A non-existent user (e.g. blah)
 
-## Logging
-
-```python
-# See https://www.freedesktop.org/software/systemd/python-systemd/journal.html
-import logging
-from systemd.journal import JournalHandler
-
-log = logging.getLogger('demo')
-log.addHandler(JournalHandler())
-log.setLevel(logging.INFO)
-log.info("sent to journal")
-```
-
 ## Arch
 
-/home/<user>/.pamela_vault/
+/home/<user>/.luksypam/
 	container1
 	container2
 	config.json
-	vault
+	vault.db
 
 ## Build pycryptsetup module
 
@@ -41,18 +28,13 @@ log.info("sent to journal")
 python3 setup.py
 ```
 
-## First login
-
-- [ ] authenticate.py
-	- [ ] Get user name
-	- [ ] Get user password
-	- [ ] Write in DB (containerName, password) if savePass
-
 ## Tasks
 
-- [ ] config file actions
-- [ ] bdd actions
-- [ ] device actions
-- [ ] 
-- [ ] 
-- [ ] 
+- [/] device actions
+	- [ ] createDevice
+	- [ ] resize
+- [ ] Calls from auth
+- [ ] Create a pycryptsetup module
+- [ ] Create a deb package ?
+	- [ ] Create hidden directory
+	- [ ] Add config skel 

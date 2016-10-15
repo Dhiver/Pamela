@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-import simplejson as json
 import logging
 from systemd.journal import JournalHandler
+import simplejson as json
 
 logger = logging.getLogger('ParseConfig')
 logger.addHandler(JournalHandler())

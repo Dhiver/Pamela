@@ -1,11 +1,15 @@
-#import sys
-#sys.path.append("/tmp/build/")
+#!/usr/bin/env python3
 
 import pycryptsetup
 import logging
 from systemd.journal import JournalHandler
-from utils import get_abs_path, get_sha256_hexdigest
+from pathlib import Path
+from hashlib import sha256
 import os
+
+logger = logging.getLogger('LUKSDevice')
+logger.addHandler(JournalHandler())
+logger.setLevel(logging.INFO)
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
@@ -23,17 +27,21 @@ class LUKSDevice:
     """ LUKSDevice represents a LUKS device """
 
     def __init__(self, path):
-        self.path = None
+        assert isinstance(path, str)
+        self.path = path
         self.c = None
-        assert isinstance(path, basestring)
+        self.name = ""
+
+    def init(self):
+        self.name = sha256(self.path.encode()).hexdigest()
 
         try:
-            self.path = get_abs_path(path)
+            self.path = str(Path(self.path).resolve())
         except Exception as e:
-            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR, e)
-            raise
-
-        self.name = get_sha256_hexdigest(self.path)
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Can't get absolute path for '{}': {}"
+                           .format(self.path, e))
+            return False
 
         try:
             self.c = pycryptsetup.CryptSetup(
@@ -42,12 +50,14 @@ class LUKSDevice:
                 logFunc = log_to_systemd)
         except Exception as e:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR, e)
-            raise
+            return False
 
         self.c.debugLevel(pycryptsetup.CRYPT_DEBUG_NONE);
 
         log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
-                       "Instance correctly initialized with path: " + path)
+                       "Instance correctly initialized with path: {}"
+                       .format(self.path))
+        return True
 
     def open(self, passphrase):
         """ Open a LUKS device """
@@ -138,11 +148,16 @@ class LUKSDevice:
 
         return True
 
+    def createDevice(self, passphrase, profile="normal"):
+        assert isinstance(passphrase, str)
+        assert isinstance(profile, str)
+        pass
+
+    def resize(self, newSize):
+        assert isinstance(newSize, int)
+        pass
+
     def __del__(self):
         log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
                        "Device {} object cleared".format(self.path))
         del self.c
-
-logger = logging.getLogger('jeankevincrypto')
-logger.addHandler(JournalHandler())
-logger.setLevel(logging.DEBUG)
