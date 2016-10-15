@@ -22,15 +22,8 @@
 	config.json
 	vault.db
 
-## Build pycryptsetup module
-
-```bash
-python3 setup.py
-```
-
 ## Tasks
 
-- [ ] Create a pycryptsetup module
 - [/] device actions
 	- [ ] createDevice
 	- [ ] resize
