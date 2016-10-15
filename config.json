@@ -1,0 +1,18 @@
+{
+    "container1": {
+        "mount": true,
+        "mountDir": "container1",
+        "useUserPassword": false,
+	"savePass": true,
+	"createProfile": "normal",
+	"sizeInMB": 8000
+    },
+    "container2": {
+        "mount": "oui",
+        "mountDir": "/tmp/container2",
+        "useUserPassword": true,
+	"savePass": false,
+	"createProfile": "weak",
+	"sizeInMB": 10000
+    }
+}

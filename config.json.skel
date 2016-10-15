@@ -1,0 +1,10 @@
+{
+    "defaultContainer": {
+        "mount": true,
+        "mountDir": "defaultContainer",
+	"useUserPassword": true,
+	"savePass": false,
+	"createProfile": "normal",
+	"sizeInMB": 8000
+    }
+}

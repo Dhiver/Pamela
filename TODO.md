@@ -6,16 +6,15 @@
 	- [ ] If a user is logged in twice, it is important that the user's home directory is not unmounted the first time the user logs out.
 - [ ] When user log out, close the volume
 
-## Bonus
+## Test cases
 
-- [ ] Handle a debug flag in our module (talk to systemd)
-```c
-/* Don't forget the -lsystemd */
-#include <systemd/sd-journal.h>
+- [ ] A user with an encrypted home directory (e.g. pamela with the correct password)
+- [ ] The above case but with a mistyped password
+- [ ] A user without an encrypted home directory (e.g. root with the correct password)
+- [ ] The above case but with a mistyped password
+- [ ] A non-existent user (e.g. blah)
 
-sd_journal_print(LOG_NOTICE, "Hello World");
-}
-```
+## Logging
 
 ```python
 # See https://www.freedesktop.org/software/systemd/python-systemd/journal.html
@@ -28,57 +27,32 @@ log.setLevel(logging.INFO)
 log.info("sent to journal")
 ```
 
-- [ ] Create a config file
-	- [ ] Specify where the volume is regarding the user
-	- [ ] Say if the encrypted volume password is different from the user session password
-
-## Test cases
-
-- [ ] A user with an encrypted home directory (e.g. pamela with the correct password)
-- [ ] The above case but with a mistyped password
-- [ ] A user without an encrypted home directory (e.g. root with the correct password)
-- [ ] The above case but with a mistyped password
-- [ ] A non-existent user (e.g. blah)
-
 ## Arch
 
 /home/<user>/.pamela_vault/
 	container1
 	container2
-	config
+	config.json
+	vault
 
-## PAM part
+## Build pycryptsetup module
 
-- [ ] Be able to decrypt volume with the user password
-- [ ] Determine if user close the last session
-
-## Encryption part
-
-- [x] Open existing container
-- [x] Mount the container
-- [x] Umount container
-- [x] Close container
-- [ ] Init container
-- [ ] Create container
-	- [ ] With 2 profiles (weak / normal)
-	- [ ] Format to ext4 filesystem
-- [ ] Resize a container
-- [ ] Delete container
-
-## Compiling
-
-### PAM related
-
-```bash
-aptitude install build-essential libpam-python python3 libpam0g-dev python3-systemd libcryptsetup-dev
-gcc -fPIC -c pam_module.c
-gcc -shared -o pam_module.so pam_module.o -lpam
-
-auth required /tmp/pam_module.so
-session required /tmp/pam_module.so
-```
-
-### Crypto related
 ```bash
 python3 setup.py
 ```
+
+## First login
+
+- [ ] authenticate.py
+	- [ ] Get user name
+	- [ ] Get user password
+	- [ ] Write in DB (containerName, password) if savePass
+
+## Tasks
+
+- [ ] config file actions
+- [ ] bdd actions
+- [ ] device actions
+- [ ] 
+- [ ] 
+- [ ] 

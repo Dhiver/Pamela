@@ -1,24 +1,22 @@
-#!/usr/bin/env python3
-
-import sys
-sys.path.append("/tmp/build/")
+#import sys
+#sys.path.append("/tmp/build/")
 
 import pycryptsetup
 import logging
-# from systemd.journal import JournalHandler
+from systemd.journal import JournalHandler
 from utils import get_abs_path, get_sha256_hexdigest
 import os
 
-# logLevels = {
-#     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
-#     pycryptsetup.CRYPT_LOG_ERROR: logging.ERROR,
-#     pycryptsetup.CRYPT_LOG_NORMAL: logging.INFO,
-#     pycryptsetup.CRYPT_LOG_VERBOSE: logging.NOTSET
-# }
+logLevels = {
+    pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
+    pycryptsetup.CRYPT_LOG_ERROR: logging.ERROR,
+    pycryptsetup.CRYPT_LOG_NORMAL: logging.INFO,
+    pycryptsetup.CRYPT_LOG_VERBOSE: logging.NOTSET
+}
 
 def log_to_systemd(level, msg="<log message is not available>"):
-    # logger.log(logLevels.get(level, logging.NOTSET),
-    #            "{}".format(msg))
+    logger.log(logLevels.get(level, logging.NOTSET),
+               "{}".format(msg))
     return
 
 class LUKSDevice:
@@ -145,6 +143,6 @@ class LUKSDevice:
                        "Device {} object cleared".format(self.path))
         del self.c
 
-# logger = logging.getLogger('jeankevincrypto')
-# logger.addHandler(JournalHandler())
-# logger.setLevel(logging.DEBUG)
+logger = logging.getLogger('jeankevincrypto')
+logger.addHandler(JournalHandler())
+logger.setLevel(logging.DEBUG)
