@@ -26,9 +26,13 @@
 
 - [/] device actions
 	- [ ] createDevice
+		- [ ] formating to ext4
 	- [ ] resize
-- [ ] Calls from auth
+- [ ] auth script
+	- [ ] Write a container class
+		- [ ] mount / umount
 - [ ] Create a deb package
+	- [ ] Where to put the code
 	- [ ] Create hidden directory
 	- [ ] Add config skel 
 	- [ ] Add calling line in /etc/common-auth
