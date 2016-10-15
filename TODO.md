@@ -30,11 +30,12 @@ python3 setup.py
 
 ## Tasks
 
+- [ ] Create a pycryptsetup module
 - [/] device actions
 	- [ ] createDevice
 	- [ ] resize
 - [ ] Calls from auth
-- [ ] Create a pycryptsetup module
-- [ ] Create a deb package ?
+- [ ] Create a deb package
 	- [ ] Create hidden directory
 	- [ ] Add config skel 
+	- [ ] Add calling line in /etc/common-auth
