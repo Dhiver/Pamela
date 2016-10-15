@@ -4,7 +4,7 @@ import logging
 from systemd.journal import JournalHandler
 from pysqlcipher3 import dbapi2 as sqlite
 
-logger = logging.getLogger('SQLCipher')
+logger = logging.getLogger(__name__)
 logger.addHandler(JournalHandler())
 logger.setLevel(logging.INFO)
 

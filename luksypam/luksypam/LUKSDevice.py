@@ -7,7 +7,7 @@ from pathlib import Path
 from hashlib import sha256
 import os
 
-logger = logging.getLogger('LUKSDevice')
+logger = logging.getLogger(__name__)
 logger.addHandler(JournalHandler())
 logger.setLevel(logging.INFO)
 
