@@ -12,7 +12,7 @@ MANDATORY_ENTRIES = [('mount', bool),
                      ('mountDir', str),
                      ('useUserPassword', bool),
                      ('savePass', bool),
-                     ('createProfile', str),
+                     ('weak', bool),
                      ('sizeInMB', int)]
 
 class ParseConfig:

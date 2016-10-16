@@ -4,7 +4,7 @@
         "mountDir": "defaultContainer",
 	"useUserPassword": true,
 	"savePass": false,
-	"createProfile": "normal",
+	"weak": false,
 	"sizeInMB": 8000
     }
 }

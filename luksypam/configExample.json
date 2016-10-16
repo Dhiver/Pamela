@@ -4,7 +4,7 @@
         "mountDir": "container1",
         "useUserPassword": false,
 	"savePass": true,
-	"createProfile": "normal",
+	"weak": false,
 	"sizeInMB": 8000
     },
     "container2": {
@@ -12,7 +12,7 @@
         "mountDir": "/tmp/container2",
         "useUserPassword": true,
 	"savePass": false,
-	"createProfile": "weak",
+	"weak": true,
 	"sizeInMB": 10000
     }
 }
