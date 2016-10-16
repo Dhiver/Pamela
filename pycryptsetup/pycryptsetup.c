@@ -370,17 +370,19 @@ CryptSetup_luksFormat_HELP[] =
   cipher - cipher specification, e.g. aes, serpent\n\
   cipherMode - cipher mode specification, e.g. cbc-essiv:sha256, xts-plain64\n\
   keysize - key size in bits\n\
-  hashMode - hash specification, e.g. sha256";
+  hashMode - hash specification, e.g. sha256\n\
+  useRandom - random number generator (/dev/random) will be used to create the master key if True";
 
 static PyObject *CryptSetup_luksFormat(CryptSetupObject* self, PyObject *args, PyObject *kwds)
 {
-	static const char *kwlist[] = {"cipher", "cipherMode", "keysize", "hashMode", NULL};
+	static const char *kwlist[] = {"cipher", "cipherMode", "keysize", "hashMode", "useRandom", NULL};
 	char *cipher_mode = NULL, *cipher = NULL, *hashMode = NULL;
-	int keysize = 256;
+	int keysize = 256, useRandom = 0;
 	PyObject *keysize_object = NULL;
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|zzOz", CONST_CAST(char**)kwlist,
-					&cipher, &cipher_mode, &keysize_object, &hashMode))
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|zzOzp", CONST_CAST(char**)kwlist,
+					&cipher, &cipher_mode, &keysize_object, &hashMode,
+					&useRandom))
 		return NULL;
 
 	struct crypt_params_luks1 params = {
@@ -400,6 +402,9 @@ static PyObject *CryptSetup_luksFormat(CryptSetupObject* self, PyObject *args, P
 		return NULL;
 	} else
 		keysize = PyInt_AsLong(keysize_object);
+
+	if (useRandom)
+		crypt_set_rng_type(self->device, CRYPT_RNG_RANDOM);
 
 	// FIXME use #defined defaults
 	return PyObjectResult(crypt_format(self->device, CRYPT_LUKS1,
