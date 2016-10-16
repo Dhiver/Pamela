@@ -179,7 +179,8 @@ class LUKSDevice:
             self.c.luksFormat(cipher="aes",
                              cipherMode="xts-plain64",
                              keysize=WEAK_KEY_SIZE if weak else NORMAL_KEY_SIZE,
-                             hashMode=WEAK_HASH_MODE if weak else NORMAL_HASH_MODE)
+                             hashMode=WEAK_HASH_MODE if weak else NORMAL_HASH_MODE,
+                             useRandom=False if weak else True)
             self.c.addKeyByVolumeKey(newPassphrase = passphrase)
         except Exception as e:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
