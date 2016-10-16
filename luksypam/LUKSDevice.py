@@ -7,6 +7,9 @@ from pathlib import Path
 from hashlib import sha256
 import os
 
+NORMAL_ITER_TIME = 5000
+WEAK_ITER_TIME = 2000
+
 logger = logging.getLogger(__name__)
 logger.addHandler(JournalHandler())
 logger.setLevel(logging.INFO)
@@ -22,6 +25,17 @@ def log_to_systemd(level, msg="<log message is not available>"):
     logger.log(logLevels.get(level, logging.NOTSET),
                "{}".format(msg))
     return
+
+def generatePseudoRandomFileGarbage(path, size):
+    try:
+        with open(path, "wb") as f:
+            f.write(os.urandom(size * 1024**2))
+    except Exception as e:
+        logger.log(logging.ERROR,
+                   "Error generating garbage file {}: {}"
+                   .format(path, e))
+        return False
+    return True
 
 class LUKSDevice:
     """ LUKSDevice represents a LUKS device """
@@ -148,14 +162,30 @@ class LUKSDevice:
 
         return True
 
-    def createDevice(self, passphrase, profile="normal"):
+    def createDevice(self, size, passphrase, weak=False):
+        assert isinstance(size, int)
         assert isinstance(passphrase, str)
-        assert isinstance(profile, str)
-        pass
+        assert isinstance(weak, bool)
+        if not generatePseudoRandomFileGarbage(self.path, size):
+            return False
+        if not self.init():
+            return False
+        try:
+            self.c.iterationTime(WEAK_ITER_TIME if weak else NORMAL_ITER_TIME)
+            self.c.luksFormat(cipher="aes",
+                             cipherMode="xts-plain64",
+                             keysize=256 if weak else 512)
+            self.c.addKeyByVolumeKey(newPassphrase = passphrase)
+        except Exception as e:
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Error creating device {}: {}"
+                           .format(self.path, e))
+            return False
+        return True
 
     def resize(self, newSize):
         assert isinstance(newSize, int)
-        pass
+        return False
 
     def __del__(self):
         log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
