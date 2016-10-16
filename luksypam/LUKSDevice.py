@@ -9,6 +9,10 @@ import os
 
 NORMAL_ITER_TIME = 5000
 WEAK_ITER_TIME = 2000
+NORMAL_HASH_MODE = "sha512"
+WEAK_HASH_MODE = "sha256"
+NORMAL_KEY_SIZE = 512
+WEAK_KEY_SIZE = 512
 
 logger = logging.getLogger(__name__)
 logger.addHandler(JournalHandler())
@@ -174,7 +178,8 @@ class LUKSDevice:
             self.c.iterationTime(WEAK_ITER_TIME if weak else NORMAL_ITER_TIME)
             self.c.luksFormat(cipher="aes",
                              cipherMode="xts-plain64",
-                             keysize=256 if weak else 512)
+                             keysize=WEAK_KEY_SIZE if weak else NORMAL_KEY_SIZE,
+                             hashMode=WEAK_HASH_MODE if weak else NORMAL_HASH_MODE)
             self.c.addKeyByVolumeKey(newPassphrase = passphrase)
         except Exception as e:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
