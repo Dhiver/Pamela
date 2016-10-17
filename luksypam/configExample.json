@@ -5,14 +5,14 @@
         "useUserPassword": false,
 	"savePass": true,
 	"weak": false,
-	"sizeInMB": 8000
+	"sizeInMB": 8
     },
     "container2": {
-        "mount": "oui",
+        "mount": false,
         "mountDir": "/tmp/container2",
         "useUserPassword": true,
 	"savePass": false,
 	"weak": true,
-	"sizeInMB": 10000
+	"sizeInMB": 10
     }
 }
