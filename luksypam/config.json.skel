@@ -5,6 +5,6 @@
 	"useUserPassword": true,
 	"savePass": false,
 	"weak": false,
-	"sizeInMB": 8000
+	"sizeInMB": 80
     }
 }
