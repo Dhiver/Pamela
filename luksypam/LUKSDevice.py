@@ -67,7 +67,9 @@ class LUKSDevice:
                 name = self.name,
                 logFunc = log_to_systemd)
         except Exception as e:
-            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR, e)
+            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
+                           "Device {} with path {} error: {}"
+                           .format(self.path, self.name, e))
             return False
 
         self.c.debugLevel(pycryptsetup.CRYPT_DEBUG_NONE);
@@ -78,7 +80,8 @@ class LUKSDevice:
         return True
 
     def isOpen(self):
-        return self.c.status() == pycryptsetup.CRYPT_ACTIVE
+        status = self.c.status()
+        return status == pycryptsetup.CRYPT_ACTIVE or status == pycryptsetup.CRYPT_BUSY
 
     def open(self, passphrase):
         """ Open a LUKS device """
@@ -197,6 +200,4 @@ class LUKSDevice:
         return False
 
     def __del__(self):
-        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
-                       "Device {} object cleared".format(self.path))
         del self.c
