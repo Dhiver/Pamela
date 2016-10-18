@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(JournalHandler())
 logger.setLevel(logging.INFO)
 
-MANDATORY_ENTRIES = [('mount', bool),
+MANDATORY_ENTRIES = [('enable', bool),
                      ('mountDir', str),
                      ('useUserPassword', bool),
                      ('savePass', bool),

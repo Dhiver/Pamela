@@ -1,6 +1,6 @@
 {
     "defaultContainer": {
-        "mount": true,
+        "enable": true,
         "mountDir": "defaultContainer",
 	"useUserPassword": true,
 	"savePass": false,

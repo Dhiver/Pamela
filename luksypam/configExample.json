@@ -1,6 +1,6 @@
 {
     "container1": {
-        "mount": true,
+        "enable": true,
         "mountDir": "container1",
         "useUserPassword": false,
 	"savePass": true,
@@ -8,7 +8,7 @@
 	"sizeInMB": 8
     },
     "container2": {
-        "mount": false,
+        "enable": false,
         "mountDir": "/tmp/container2",
         "useUserPassword": true,
 	"savePass": false,
