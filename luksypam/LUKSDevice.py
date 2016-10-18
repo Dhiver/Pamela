@@ -77,6 +77,9 @@ class LUKSDevice:
                        .format(self.path))
         return True
 
+    def isOpen(self):
+        return self.c.status() == pycryptsetup.CRYPT_ACTIVE
+
     def open(self, passphrase):
         """ Open a LUKS device """
         if self.c.isLuks() != 0:
@@ -90,7 +93,7 @@ class LUKSDevice:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR, e)
             return False
 
-        if self.c.status() != pycryptsetup.CRYPT_ACTIVE:
+        if not self.isOpen():
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                            "Device {} was not activated".format(self.path))
             return False
@@ -102,7 +105,7 @@ class LUKSDevice:
 
     def close(self):
         """ Close a LUKS device """
-        if self.c.status() != pycryptsetup.CRYPT_ACTIVE:
+        if not self.isOpen():
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                            "Device {} is not active, can not close it".
                            format(self.path))
@@ -123,7 +126,7 @@ class LUKSDevice:
     def wipe(self):
         """ Wipe a LUKS device by overwriting volume header
         Implement section 5.4 of https://gitlab.com/cryptsetup/cryptsetup/wikis/FrequentlyAskedQuestions"""
-        if self.c.status() != pycryptsetup.CRYPT_INACTIVE:
+        if self.isOpen():
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                            "Close the device {} before wiping".
                            format(self.path))
