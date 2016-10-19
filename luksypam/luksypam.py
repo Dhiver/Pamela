@@ -7,18 +7,16 @@ import ParseConfig
 import LUKSDevice
 from mount_umount import mount, umount
 from execShellCmd import execShellCmd
+from luksypam_log import logger
 
 password = input()[:-1]
 
-from luksypam_log import logger
-
-USER_HOME="/home/{}/".format(os.environ["PAM_USER"])
+USER_HOME=os.path.expanduser("~{}/".format(os.environ["PAM_USER"]))
 USER_ROOT_FOLDER=USER_HOME + ".luksypam/"
 USER_CONFIG_FILE=USER_ROOT_FOLDER + "config.json"
 FORMAT_DRIVE_IN="ext4"
 
 # Check if luksypam is activated
-
 if not os.path.isdir(USER_ROOT_FOLDER[:-1]) or not os.path.isfile(USER_CONFIG_FILE):
     logger.log(logging.INFO, "not activated, cant find {} neither {}".format(USER_ROOT_FOLDER[:-1], USER_CONFIG_FILE))
     sys.exit(0)
