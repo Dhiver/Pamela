@@ -127,5 +127,6 @@ class LuksyPam:
                     logger.log(logging.ERROR,
                                "Error mounting {} on {}: {}"
                                .format(currentDevicePath, currentMountPath, ret[1]))
+                    return False
                 logger.log(logging.INFO, "Container {} mounted".format(container.name))
         return True
