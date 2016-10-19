@@ -74,7 +74,8 @@ class LuksyPam:
             if not PosixPath(currentContainerPath).is_file():
                 logger.log(logging.INFO, "Container {} does not exist".format(container.name))
                 # create volume
-                if not container.data.createDevice(container.config["sizeInMB"], self.PASSWORD):
+                if not container.data.createDevice(
+                    container.config["sizeInMB"], self.PASSWORD, container.config["weak"]):
                     logger.log(logging.INFO, "Container {} can not create".format(container.name))
                     return False
                 logger.log(logging.INFO,
