@@ -24,6 +24,12 @@
 
 ## Tasks
 
+- [x] Harden get user name
+- [ ] Harden open
+- [ ] Do weak open config params
+- [ ] logout close
+- [ ] harden logout close
+- [ ] Handle db creation and usage
 - [/] device actions
 	- [ ] resize
 - [ ] Create a deb package
@@ -36,4 +42,7 @@
 
 ### Auth
 
+* Harden get user name
+* 
 * Check if mount dir is a is_symlink()
+* 

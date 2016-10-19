@@ -16,7 +16,17 @@ for user in psutil.users():
 logger.log(logging.DEBUG, "Env : {}".format(os.environ))
 logger.log(logging.DEBUG, "Logged users : {}".format(users))
 
-inst = LuksyPam.LuksyPam(os.environ["PAM_USER"], password)
+username = str()
+if "PAM_USER" in os.environ:
+    username = os.environ["PAM_USER"]
+    if not username:
+        logger.log(logging.ERROR, "Username empty")
+        sys.exit(0)
+else:
+    logger.log(logging.ERROR, "Can't get username")
+    sys.exit(0)
+
+inst = LuksyPam.LuksyPam(username, password)
 
 if not inst.init() or not inst.isLuksypamEnabled() or not inst.loadConfs() or not inst.initContainers() or not inst.openContainers() or not inst.mountContainers():
     sys.exit(0)
