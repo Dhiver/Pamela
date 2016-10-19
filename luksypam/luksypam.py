@@ -15,8 +15,6 @@ logger = logging.getLogger(__name__)
 logger.addHandler(JournalHandler())
 logger.setLevel(logging.INFO)
 
-print(os.environ)
-
 USER_HOME="/home/{}/".format(os.environ["PAM_USER"])
 USER_ROOT_FOLDER=USER_HOME + ".luksypam/"
 USER_CONFIG_FILE=USER_ROOT_FOLDER + "config.json"
@@ -33,15 +31,15 @@ config = ParseConfig.ParseConfig(USER_CONFIG_FILE)
 if not config.parse() or config.isEmpty() or not config.isValid():
     sys.exit(0)
 
-print("A config file exists and it is valid!")
+logger.log(logging.INFO, "Config file for user {} found and valid".format(os.environ["PAM_USER"]))
 infos = config.getContent()
-print(infos)
 
 for container in infos:
     created = False
-    print(infos[container])
+    logger.log(logging.INFO, "Container {} infos: {}".format(container, infos[container]))
     if not infos[container]["enable"]:
-        logger.log(logging.INFO, "Container {} not enabled".format(container))
+        logger.log(logging.INFO, "Container {} not enabled, nothing to be done"
+                   .format(container))
         continue
     currentContainerPath = USER_ROOT_FOLDER + container
     d = LUKSDevice.LUKSDevice(currentContainerPath)
@@ -51,6 +49,9 @@ for container in infos:
         if not d.createDevice(infos[container]["sizeInMB"], password):
             logger.log(logging.INFO, "Container {} can not create".format(container))
             sys.exit(0)
+        logger.log(logging.INFO,
+                   "Container {} created with size {}"
+                   .format(container, infos[container]["sizeInMB"]))
         created = True
     if not d.init():
         logger.log(logging.INFO, "Container {} can not init".format(container))
@@ -61,7 +62,9 @@ for container in infos:
         if not d.open(password):
             logger.log(logging.INFO, "Container {} can not open".format(container))
             sys.exit(0)
+    logger.log(logging.INFO, "Container {} opened".format(container))
     deviceInfos = d.c.info()
+    logger.log(logging.INFO, "Container {} infos: {}".format(container, deviceInfos))
     currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
     # if new volume, format
     if created:
@@ -80,13 +83,16 @@ for container in infos:
                        "Error creating folder {}: {}"
                        .format(currentMountPath, e))
             sys.exit(0)
+        logger.log(logging.INFO, "Mount destination folder created: {}".format(currentMountPath))
 
     if not os.path.ismount(currentMountPath):
-        logger.log(logging.INFO, "Container {} not mount".format(container))
+        logger.log(logging.INFO, "Container {} not mounted".format(container))
         ret = mount(currentDevicePath, currentMountPath, FORMAT_DRIVE_IN)
         if not ret[0]:
             logger.log(logging.ERROR,
                        "Error mounting {} on {}: {}"
                        .format(currentDevicePath, currentMountPath, ret[1]))
+        logger.log(logging.INFO, "Container {} mounted".format(container))
 
+logger.log(logging.INFO, "OK")
 sys.exit(0)

@@ -25,12 +25,7 @@
 ## Tasks
 
 - [/] device actions
-	- [ ] createDevice
-		- [ ] formating to ext4
 	- [ ] resize
-- [ ] auth script
-	- [ ] Write a container class
-		- [ ] mount / umount
 - [ ] Create a deb package
 	- [ ] Where to put the code
 	- [ ] Create hidden directory
