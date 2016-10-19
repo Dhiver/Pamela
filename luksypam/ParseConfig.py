@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 
 import logging
-from systemd.journal import JournalHandler
 import simplejson as json
-
-logger = logging.getLogger(__name__)
-logger.addHandler(JournalHandler())
-logger.setLevel(logging.INFO)
+from luksypam_log import logger
 
 MANDATORY_ENTRIES = [('enable', bool),
                      ('mountDir', str),

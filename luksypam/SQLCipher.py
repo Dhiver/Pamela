@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 
 import logging
-from systemd.journal import JournalHandler
 from pysqlcipher3 import dbapi2 as sqlite
-
-logger = logging.getLogger(__name__)
-logger.addHandler(JournalHandler())
-logger.setLevel(logging.INFO)
+from luksypam_log import logger
 
 class SQLCipher:
     def __init__(self, path):

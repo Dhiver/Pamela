@@ -3,7 +3,6 @@
 import sys
 import os
 import logging
-from systemd.journal import JournalHandler
 import ParseConfig
 import LUKSDevice
 from mount_umount import mount, umount
@@ -11,9 +10,7 @@ from execShellCmd import execShellCmd
 
 password = input()[:-1]
 
-logger = logging.getLogger(__name__)
-logger.addHandler(JournalHandler())
-logger.setLevel(logging.INFO)
+from luksypam_log import logger
 
 USER_HOME="/home/{}/".format(os.environ["PAM_USER"])
 USER_ROOT_FOLDER=USER_HOME + ".luksypam/"
@@ -36,7 +33,7 @@ infos = config.getContent()
 
 for container in infos:
     created = False
-    logger.log(logging.INFO, "Container {} infos: {}".format(container, infos[container]))
+    logger.log(logging.DEBUG, "Container {} infos: {}".format(container, infos[container]))
     if not infos[container]["enable"]:
         logger.log(logging.INFO, "Container {} not enabled, nothing to be done"
                    .format(container))
@@ -62,9 +59,9 @@ for container in infos:
         if not d.open(password):
             logger.log(logging.INFO, "Container {} can not open".format(container))
             sys.exit(0)
-    logger.log(logging.INFO, "Container {} opened".format(container))
+    logger.log(logging.INFO, "Container {} is open".format(container))
     deviceInfos = d.c.info()
-    logger.log(logging.INFO, "Container {} infos: {}".format(container, deviceInfos))
+    logger.log(logging.DEBUG, "Container {} infos: {}".format(container, deviceInfos))
     currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
     # if new volume, format
     if created:

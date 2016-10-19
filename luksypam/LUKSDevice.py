@@ -2,10 +2,10 @@
 
 import pycryptsetup
 import logging
-from systemd.journal import JournalHandler
 from pathlib import Path
 from hashlib import sha256
 import os
+from luksypam_log import logger
 
 NORMAL_ITER_TIME = 5000
 WEAK_ITER_TIME = 2000
@@ -14,9 +14,6 @@ WEAK_HASH_MODE = "sha256"
 NORMAL_KEY_SIZE = 512
 WEAK_KEY_SIZE = 512
 
-logger = logging.getLogger(__name__)
-logger.addHandler(JournalHandler())
-logger.setLevel(logging.INFO)
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
