@@ -31,3 +31,9 @@
 	- [ ] Create hidden directory
 	- [ ] Add config skel 
 	- [ ] Add calling line in /etc/common-auth
+
+## Actions
+
+### Auth
+
+* Check if mount dir is a is_symlink()
