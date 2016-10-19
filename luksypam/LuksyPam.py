@@ -118,14 +118,14 @@ class LuksyPam:
                                .format(currentMountPath, e))
                     return False
             logger.log(logging.INFO, "Mount destination folder created: {}".format(currentMountPath))
-        if not os.path.ismount(currentMountPath):
-            logger.log(logging.INFO, "Container {} not mounted".format(container.name))
-            deviceInfos = container.data.c.info()
-            currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
-            ret = mount(currentDevicePath, currentMountPath, FORMAT_DRIVE_IN)
-            if not ret[0]:
-                logger.log(logging.ERROR,
-                           "Error mounting {} on {}: {}"
-                           .format(currentDevicePath, currentMountPath, ret[1]))
-            logger.log(logging.INFO, "Container {} mounted".format(container.name))
+            if not os.path.ismount(currentMountPath):
+                logger.log(logging.INFO, "Container {} not mounted".format(container.name))
+                deviceInfos = container.data.c.info()
+                currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
+                ret = mount(currentDevicePath, currentMountPath, FORMAT_DRIVE_IN)
+                if not ret[0]:
+                    logger.log(logging.ERROR,
+                               "Error mounting {} on {}: {}"
+                               .format(currentDevicePath, currentMountPath, ret[1]))
+                logger.log(logging.INFO, "Container {} mounted".format(container.name))
         return True
