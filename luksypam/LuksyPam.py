@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 from pathlib import PosixPath
+from getpass import getpass
 import LUKSDevice
 import ParseConfig
 from luksypam_log import logger
@@ -74,8 +75,9 @@ class LuksyPam:
             if not PosixPath(currentContainerPath).is_file():
                 logger.log(logging.INFO, "Container {} does not exist".format(container.name))
                 # create volume
+                tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
                 if not container.data.createDevice(
-                    container.config["sizeInMB"], self.PASSWORD, container.config["weak"]):
+                    container.config["sizeInMB"], tmpPassword, container.config["weak"]):
                     logger.log(logging.INFO, "Container {} can not create".format(container.name))
                     return False
                 logger.log(logging.INFO,
@@ -91,7 +93,8 @@ class LuksyPam:
         for container in self.containers:
             if not container.data.isOpen():
                 logger.log(logging.INFO, "Container {} is not open".format(container.name))
-                if not container.data.open(self.PASSWORD):
+                tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
+                if not container.data.open(tmpPassword):
                     logger.log(logging.INFO, "Container {} can not open".format(container.name))
                     return False
             logger.log(logging.INFO, "Container {} is open".format(container.name))

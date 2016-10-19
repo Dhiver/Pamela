@@ -27,6 +27,7 @@
 - [x] Harden get user name
 - [x] Harden open
 - [x] Do weak open config params
+- [x] Handle useUserPassword config parameter
 - [ ] logout close
 - [ ] harden logout close
 - [ ] Handle db creation and usage
