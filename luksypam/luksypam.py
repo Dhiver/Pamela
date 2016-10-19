@@ -9,22 +9,25 @@ import LuksyPam
 
 password = input()[:-1]
 
-users = list()
-for user in psutil.users():
-    users.append(user.name)
+#users = list()
+#for user in psutil.users():
+#    users.append(user.name)
+#logger.log(logging.DEBUG, "Logged users : {}".format(users))
 
 logger.log(logging.DEBUG, "Env : {}".format(os.environ))
-logger.log(logging.DEBUG, "Logged users : {}".format(users))
 
-username = str()
-if "PAM_USER" in os.environ:
-    username = os.environ["PAM_USER"]
-    if not username:
-        logger.log(logging.ERROR, "Username empty")
+MANDATORY_ENV_VARS = ['PAM_USER', 'PAM_TYPE']
+
+for key in MANDATORY_ENV_VARS:
+    if not key in os.environ:
+        logger.log(logging.ERROR, "Env var {} is missing".format(key))
         sys.exit(0)
-else:
-    logger.log(logging.ERROR, "Can't get username")
-    sys.exit(0)
+    if not os.environ[key]:
+        logger.log(logging.ERROR, "Env var '{}' is empty".format(key))
+        sys.exit(0)
+
+username = os.environ["PAM_USER"]
+action = os.environ["PAM_TYPE"]
 
 inst = LuksyPam.LuksyPam(username, password)
 
