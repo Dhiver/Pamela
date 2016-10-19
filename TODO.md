@@ -25,8 +25,8 @@
 ## Tasks
 
 - [x] Harden get user name
-- [ ] Harden open
-- [ ] Do weak open config params
+- [x] Harden open
+- [x] Do weak open config params
 - [ ] logout close
 - [ ] harden logout close
 - [ ] Handle db creation and usage
