@@ -28,7 +28,7 @@ def getUserHome(userName):
     return ret
 
 class LuksyPam:
-    def __init__(self, userName, password):
+    def __init__(self, userName, password=""):
         self.USER_NAME = userName
         self.PASSWORD = password
         self.USER_HOME = str()
@@ -63,15 +63,15 @@ class LuksyPam:
         logger.log(logging.INFO,
                    "Config file for user '{}' found and valid".
                    format(self.USER_NAME))
-        for config in configs:
-            if configs[config]["enable"]:
-                self.containers.append(Container(config, configs[config], None))
+        for name in configs:
+            if configs[name]["enable"]:
+                currentContainerPath = self.USER_ROOT_FOLDER + name
+                self.containers.append(Container(name, configs[name], LUKSDevice.LUKSDevice(currentContainerPath)))
         return True
 
-    def initContainers(self):
+    def createContainers(self):
         for container in self.containers:
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
-            container.data = LUKSDevice.LUKSDevice(currentContainerPath)
             if not PosixPath(currentContainerPath).is_file():
                 logger.log(logging.INFO, "Container {} does not exist".format(container.name))
                 # create volume
@@ -84,6 +84,11 @@ class LuksyPam:
                            "Container {} created with size {}"
                            .format(container.name, container.config["sizeInMB"]))
                 container.created = True
+        return True
+
+    def initContainers(self):
+        for container in self.containers:
+            currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not container.data.init():
                 logger.log(logging.INFO, "Container {} can not init".format(container))
                 return False
