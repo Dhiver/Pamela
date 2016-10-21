@@ -115,6 +115,13 @@ class LuksyPam:
                     self.containers.remove(container)
                     continue
 
+    def closeContainers(self):
+        for container in list(self.containers):
+            if container.data.isOpen():
+                if not container.data.close():
+                    self.containers.remove(container)
+                    continue
+
     def mountContainers(self):
         for container in list(self.containers):
             currentMountPath = self.USER_HOME + "/" + container.config["mountDir"]
@@ -134,8 +141,19 @@ class LuksyPam:
                 ret = mount(currentDevicePath, currentMountPath, FORMAT_DRIVE_IN)
                 if not ret[0]:
                     logger.log(logging.ERROR,
-                               "Error mounting {} on {}: {}"
-                               .format(currentDevicePath, currentMountPath, ret[1]))
+                               "Error mounting {} on {}: {} returned {}"
+                               .format(currentDevicePath, currentMountPath, ret[1], ret[0]))
                     self.containers.remove(container)
                     continue
                 logger.log(logging.INFO, "Container {} mounted".format(container.name))
+
+    def umountContainers(self):
+        for container in list(self.containers):
+            currentMountPath = self.USER_HOME + "/" + container.config["mountDir"]
+            if os.path.ismount(currentMountPath):
+                ret = umount(currentMountPath)
+                if not ret[0]:
+                    logger.log(logging.ERROR, "Error umounting {}: {} returned {}"
+                               .format(currentMountPath, ret[1], ret[0]))
+                    self.containers.remove(container)
+                    continue

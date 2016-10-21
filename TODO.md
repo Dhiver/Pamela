@@ -29,8 +29,8 @@
 - [x] Do weak open config params
 - [x] Handle useUserPassword config parameter
 - [ ] Check if mount dir is a is_symlink()
-- [ ] logout close
-- [ ] harden logout close
+- [x] logout close
+- [x] harden logout close
 - [ ] Handle db creation and usage
 - [/] device actions
 	- [ ] resize
