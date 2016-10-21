@@ -28,6 +28,7 @@
 - [x] Harden open
 - [x] Do weak open config params
 - [x] Handle useUserPassword config parameter
+- [ ] Check if mount dir is a is_symlink()
 - [ ] logout close
 - [ ] harden logout close
 - [ ] Handle db creation and usage
@@ -38,12 +39,3 @@
 	- [ ] Create hidden directory
 	- [ ] Add config skel 
 	- [ ] Add calling line in /etc/common-auth
-
-## Actions
-
-### Auth
-
-* Harden get user name
-* 
-* Check if mount dir is a is_symlink()
-* 

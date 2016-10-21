@@ -29,11 +29,10 @@ inst = LuksyPam.LuksyPam(username, password)
 if not inst.init() or not inst.isLuksypamEnabled() or not inst.loadConfs():
     sys.exit(0)
 
-if not inst.createContainers() or not inst.initContainers():
-    sys.exit(0)
-
-if not inst.openContainers() or not inst.mountContainers():
-    sys.exit(0)
+inst.createContainers()
+inst.initContainers()
+inst.openContainers()
+inst.mountContainers()
 
 logger.log(logging.INFO, "auth OK")
 sys.exit(0)

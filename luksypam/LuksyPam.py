@@ -70,7 +70,7 @@ class LuksyPam:
         return True
 
     def createContainers(self):
-        for container in self.containers:
+        for container in list(self.containers):
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not PosixPath(currentContainerPath).is_file():
                 logger.log(logging.INFO, "Container {} does not exist".format(container.name))
@@ -78,30 +78,30 @@ class LuksyPam:
                 tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
                 if not container.data.createDevice(
                     container.config["sizeInMB"], tmpPassword, container.config["weak"]):
-                    logger.log(logging.INFO, "Container {} can not create".format(container.name))
-                    return False
+                    logger.log(logging.ERROR, "Container {} can not create".format(container.name))
+                    self.containers.remove(container)
+                    continue
                 logger.log(logging.INFO,
                            "Container {} created with size {}"
                            .format(container.name, container.config["sizeInMB"]))
                 container.created = True
-        return True
 
     def initContainers(self):
         for container in self.containers:
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not container.data.init():
-                logger.log(logging.INFO, "Container {} can not init".format(container))
-                return False
-        return True
+                logger.log(logging.ERROR, "Container {} can not init".format(container))
+                self.containers.remove(container)
 
     def openContainers(self):
-        for container in self.containers:
+        for container in list(self.containers):
             if not container.data.isOpen():
                 logger.log(logging.INFO, "Container {} is not open".format(container.name))
                 tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
                 if not container.data.open(tmpPassword):
                     logger.log(logging.INFO, "Container {} can not open".format(container.name))
-                    return False
+                    self.containers.remove(container)
+                    continue
             logger.log(logging.INFO, "Container {} is open".format(container.name))
             deviceInfos = container.data.c.info()
             logger.log(logging.DEBUG, "Container {} infos: {}".format(container.name, deviceInfos))
@@ -112,20 +112,20 @@ class LuksyPam:
                 if ret[0] != 0:
                     logger.log(logging.ERROR,
                                "Error formating device {}: {}".format(currentDevicePath, ret[2]))
-                    return False
-        return True
+                    self.containers.remove(container)
+                    continue
 
     def mountContainers(self):
-        for container in self.containers:
+        for container in list(self.containers):
             currentMountPath = self.USER_HOME + "/" + container.config["mountDir"]
             if not PosixPath(currentMountPath).is_dir():
                 try:
                     PosixPath(currentMountPath).mkdir()
                 except Exception as e:
-                    logger.log(logging.ERROR,
-                               "Error creating folder {}: {}"
+                    logger.log(logging.ERROR, "Error creating folder {}: {}"
                                .format(currentMountPath, e))
-                    return False
+                    self.containers.remove(container)
+                    continue
             logger.log(logging.INFO, "Mount destination folder created: {}".format(currentMountPath))
             if not os.path.ismount(currentMountPath):
                 logger.log(logging.INFO, "Container {} not mounted".format(container.name))
@@ -136,6 +136,6 @@ class LuksyPam:
                     logger.log(logging.ERROR,
                                "Error mounting {} on {}: {}"
                                .format(currentDevicePath, currentMountPath, ret[1]))
-                    return False
+                    self.containers.remove(container)
+                    continue
                 logger.log(logging.INFO, "Container {} mounted".format(container.name))
-        return True
