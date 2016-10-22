@@ -56,7 +56,6 @@ class LuksyPam:
 
     def loadConfs(self):
         configs = ParseConfig.ParseConfig(self.USER_CONFIG_FILE)
-
         if not configs.parse() or configs.isEmpty() or not configs.isValid():
             return False
         configs = configs.getContent()
@@ -73,16 +72,12 @@ class LuksyPam:
         for container in list(self.containers):
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not PosixPath(currentContainerPath).is_file():
-                logger.log(logging.INFO, "Container {} does not exist".format(container.name))
-                # create volume
                 tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
                 if not container.data.createDevice(
                     container.config["sizeInMB"], tmpPassword, container.config["weak"]):
-                    logger.log(logging.ERROR, "Container {} can not create".format(container.name))
                     self.containers.remove(container)
                     continue
-                logger.log(logging.INFO,
-                           "Container {} created with size {}"
+                logger.log(logging.INFO, "Container {} created with size {}"
                            .format(container.name, container.config["sizeInMB"]))
                 container.created = True
 
@@ -90,30 +85,26 @@ class LuksyPam:
         for container in self.containers:
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not container.data.init():
-                logger.log(logging.ERROR, "Container {} can not init".format(container))
                 self.containers.remove(container)
 
     def openContainers(self):
         for container in list(self.containers):
             if not container.data.isOpen():
-                logger.log(logging.INFO, "Container {} is not open".format(container.name))
                 tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
                 if not container.data.open(tmpPassword):
-                    logger.log(logging.INFO, "Container {} can not open".format(container.name))
                     self.containers.remove(container)
                     continue
-            logger.log(logging.INFO, "Container {} is open".format(container.name))
             deviceInfos = container.data.c.info()
             logger.log(logging.DEBUG, "Container {} infos: {}".format(container.name, deviceInfos))
             currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
             if container.created:
-                logger.log(logging.INFO, "Container {} formating".format(container.name))
                 ret = execShellCmd("mkfs.{} {}".format(FORMAT_DRIVE_IN, currentDevicePath))
                 if ret[0] != 0:
                     logger.log(logging.ERROR,
                                "Error formating device {}: {}".format(currentDevicePath, ret[2]))
                     self.containers.remove(container)
                     continue
+            logger.log(logging.INFO, "Container {} openned successfully".format(container.name))
 
     def closeContainers(self):
         for container in list(self.containers):
@@ -121,6 +112,8 @@ class LuksyPam:
                 if not container.data.close():
                     self.containers.remove(container)
                     continue
+                logger.log(logging.INFO, "Container {} closed successfully"
+                           .format(container.name))
 
     def mountContainers(self):
         for container in list(self.containers):
@@ -133,9 +126,7 @@ class LuksyPam:
                                .format(currentMountPath, e))
                     self.containers.remove(container)
                     continue
-            logger.log(logging.INFO, "Mount destination folder created: {}".format(currentMountPath))
             if not os.path.ismount(currentMountPath):
-                logger.log(logging.INFO, "Container {} not mounted".format(container.name))
                 deviceInfos = container.data.c.info()
                 currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
                 ret = mount(currentDevicePath, currentMountPath, FORMAT_DRIVE_IN)
@@ -157,3 +148,5 @@ class LuksyPam:
                                .format(currentMountPath, ret[1], ret[0]))
                     self.containers.remove(container)
                     continue
+            logger.log(logging.INFO, "{} umount sucessfully"
+                      .format(container.name))

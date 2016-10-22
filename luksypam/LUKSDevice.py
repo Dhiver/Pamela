@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
 
 import pycryptsetup
+from pycryptsetup import CRYPT_DEBUG_ALL, CRYPT_DEBUG_NONE
 import logging
 from pathlib import Path
 from hashlib import sha256
 import os
 from luksypam_log import logger
-
-NORMAL_ITER_TIME = 5000
-WEAK_ITER_TIME = 2000
-NORMAL_HASH_MODE = "sha512"
-WEAK_HASH_MODE = "sha256"
-NORMAL_KEY_SIZE = 512
-WEAK_KEY_SIZE = 256
-
+from constants import *
 
 logLevels = {
     pycryptsetup.CRYPT_LOG_DEBUG: logging.DEBUG,
@@ -69,9 +63,9 @@ class LUKSDevice:
                            .format(self.path, self.name, e))
             return False
 
-        self.c.debugLevel(pycryptsetup.CRYPT_DEBUG_NONE);
+        self.c.debugLevel(CRYPT_DEBUG_ALL if DEBUG_MSG_ENABLE else CRYPT_DEBUG_NONE)
 
-        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+        log_to_systemd(pycryptsetup.CRYPT_LOG_DEBUG,
                        "Instance correctly initialized with path: {}"
                        .format(self.path))
         return True
@@ -98,7 +92,7 @@ class LUKSDevice:
                            "Device {} was not activated".format(self.path))
             return False
 
-        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+        log_to_systemd(pycryptsetup.CRYPT_LOG_DEBUG,
                        "Device {} activated as {}".format(self.path,
                                                           self.name))
         return True
@@ -115,11 +109,11 @@ class LUKSDevice:
             self.c.deactivate()
         except Exception as e:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
-                           "Device {} cant be close: {}".format(
+                           "Device {} can't be close: {}".format(
                                self.path, e))
             return False
 
-        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+        log_to_systemd(pycryptsetup.CRYPT_LOG_DEBUG,
                        "Device {} correctly closed".format(self.path))
         return True
 
@@ -153,7 +147,7 @@ class LUKSDevice:
                                self.path, e))
             return False
 
-        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+        log_to_systemd(pycryptsetup.CRYPT_LOG_DEBUG,
                        "Device {} wiped".format(self.path))
 
         try:
@@ -164,7 +158,7 @@ class LUKSDevice:
                                self.path, e))
             return False
 
-        log_to_systemd(pycryptsetup.CRYPT_LOG_NORMAL,
+        log_to_systemd(pycryptsetup.CRYPT_LOG_DEBUG,
                        "Device {} removed".format(self.path))
 
         return True
