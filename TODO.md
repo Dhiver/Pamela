@@ -28,7 +28,7 @@
 - [x] Harden open
 - [x] Do weak open config params
 - [x] Handle useUserPassword config parameter
-- [ ] Check if mount dir is a is_symlink()
+- [x] Check if mount dir is a is_symlink()
 - [x] logout close
 - [x] harden logout close
 - [ ] Handle db creation and usage

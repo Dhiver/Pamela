@@ -126,6 +126,11 @@ class LuksyPam:
                                .format(currentMountPath, e))
                     self.containers.remove(container)
                     continue
+            if PosixPath(currentMountPath).is_symlink():
+                logger.log(logging.ERROR, "Error folder {} must not be a symlink"
+                           .format(currentMountPath))
+                self.containers.remove(container)
+                continue
             if not os.path.ismount(currentMountPath):
                 deviceInfos = container.data.c.info()
                 currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
