@@ -4,7 +4,6 @@ import os
 import sys
 import logging
 from pathlib import PosixPath
-from getpass import getpass
 import LUKSDevice
 import ParseConfig
 from luksypam_log import logger
@@ -23,7 +22,7 @@ def getUserHome(userName):
     ret = ""
     try:
         ret = os.path.expanduser("~{}".format(userName))
-    except RuntimeError:
+    except Exception:
         pass
     return ret
 
@@ -72,7 +71,7 @@ class LuksyPam:
         for container in list(self.containers):
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not PosixPath(currentContainerPath).is_file():
-                tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
+                tmpPassword = self.PASSWORD
                 if not container.data.createDevice(
                     container.config["sizeInMB"], tmpPassword, container.config["weak"]):
                     self.containers.remove(container)
@@ -90,7 +89,7 @@ class LuksyPam:
     def openContainers(self):
         for container in list(self.containers):
             if not container.data.isOpen():
-                tmpPassword = self.PASSWORD if container.config["useUserPassword"] else getpass(PROMPT_PASS.format(container.name))
+                tmpPassword = self.PASSWORD
                 if not container.data.open(tmpPassword):
                     self.containers.remove(container)
                     continue
