@@ -40,7 +40,9 @@ for container in luksypam.containers:
             cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
         else:
             if row["Name"] == container.name:
-                cur.execute("UPDATE Containers SET Password=? WHERE Name=?", (password, row["Name"]))
+                if container.data.init():
+                    if container.data.changePassword(row["Password"], password):
+                        cur.execute("UPDATE Containers SET Password=? WHERE Name=?", (password, row["Name"]))
 
 luksypam.db.disconnect()
 

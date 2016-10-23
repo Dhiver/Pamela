@@ -10,7 +10,6 @@
 
 - [ ] Write cli_db_manage.py
 	- [ ] Delete container
-	- [ ] Change container password
 	- [ ] Ncurse interface
 
 - [ ] Write a pam_exec.so rapidly

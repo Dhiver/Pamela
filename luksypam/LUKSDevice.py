@@ -186,5 +186,15 @@ class LUKSDevice:
             return False
         return True
 
+    def changePassword(self, old, new):
+        try:
+            self.c.addKeyByPassphrase(old, new)
+            self.c.removePassphrase(old)
+        except Exception as e:
+            logger.log(logging.ERROR, "Can't change device {} password: {}"
+                       .format(self.path, e))
+            return False
+        return True
+
     def __del__(self):
         del self.c
