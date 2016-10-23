@@ -3,15 +3,13 @@
 import logging
 import simplejson as json
 from luksypam_log import logger
+from constants import DEFAULT_MIN_CONTAINER_SIZE
 
 MANDATORY_ENTRIES = [('enable', bool),
                      ('mountDir', str),
                      ('useUserPassword', bool),
-                     ('savePass', bool),
                      ('weak', bool),
                      ('sizeInMB', int)]
-
-DEFAULT_MIN_CONTAINER_SIZE = 8
 
 class ParseConfig:
     def __init__(self, path):

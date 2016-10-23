@@ -3,7 +3,6 @@
         "enable": true,
         "mountDir": "defaultContainer",
 	"useUserPassword": true,
-	"savePass": false,
 	"weak": false,
 	"sizeInMB": 80
     }

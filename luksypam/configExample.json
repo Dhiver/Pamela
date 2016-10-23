@@ -3,7 +3,6 @@
         "enable": true,
         "mountDir": "container1",
         "useUserPassword": false,
-	"savePass": true,
 	"weak": false,
 	"sizeInMB": 8
     },
@@ -11,7 +10,6 @@
         "enable": false,
         "mountDir": "/tmp/container2",
         "useUserPassword": true,
-	"savePass": false,
 	"weak": true,
 	"sizeInMB": 10
     }
