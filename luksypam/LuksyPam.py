@@ -10,6 +10,7 @@ import ParseConfig
 from luksypam_log import logger
 from execShellCmd import execShellCmd
 from mount_umount import mount, umount
+from SQLCipher import SQLCipher
 from constants import *
 
 class Container:
@@ -35,6 +36,21 @@ class LuksyPam:
         self.USER_ROOT_FOLDER = str()
         self.USER_CONFIG_FILE = str()
         self.containers = list()
+        self.DB_PATH = str()
+        self.db = None
+
+    def initDB(self):
+        self.db = SQLCipher(self.DB_PATH)
+        if not self.db.connect(self.PASSWORD):
+            self.db = None
+            return
+        cur = self.db.getCursor()
+        try:
+            cur.execute("SELECT count(*) FROM sqlite_master;")
+        except Exception as e:
+            logger.log(logging.ERROR, "Error DB {}: {}"
+                      .format(self.DB_PATH, e))
+            self.db = None
 
     def init(self):
         self.USER_HOME = getUserHome(self.USER_NAME)
@@ -44,6 +60,11 @@ class LuksyPam:
             return False
         self.USER_ROOT_FOLDER = self.USER_HOME + "/" + LUKSYPAM_FOLDER_NAME + "/"
         self.USER_CONFIG_FILE = self.USER_ROOT_FOLDER + CONFIG_FILE_NAME
+        self.DB_PATH = self.USER_ROOT_FOLDER + LUKSYPAM_DB_NAME
+        self.initDB()
+        if self.db:
+            cur = self.db.getCursor()
+            cur.execute("CREATE TABLE IF NOT EXISTS Containers(Name TEXT PRIMARY KEY, Password TEXT)")
         return True
 
     def isLuksypamEnabled(self):
@@ -166,3 +187,6 @@ class LuksyPam:
                     continue
                 logger.log(logging.INFO, "{} umount sucessfully"
                           .format(container.name))
+    def __del__(self):
+        if self.db:
+            self.db.disconnect()
