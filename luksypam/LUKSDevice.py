@@ -186,9 +186,5 @@ class LUKSDevice:
             return False
         return True
 
-    def resize(self, newSize):
-        assert isinstance(newSize, int)
-        return False
-
     def __del__(self):
         del self.c

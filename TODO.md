@@ -24,10 +24,10 @@
 
 ## Tasks
 
-- [ ] If bad password, ask 3 times more
+- [ ] Handle 'useUserPassword' option
+	- [ ] If bad password, ask 3 times more
+- [ ] Write a pam_exec.so rapidly
 - [ ] Handle db creation and usage
-- [/] device actions
-	- [ ] resize
 - [ ] Create a deb package
 	- [ ] Where to put the code
 	- [ ] Create hidden directory
