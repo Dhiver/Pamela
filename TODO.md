@@ -24,13 +24,7 @@
 
 ## Tasks
 
-- [x] Harden get user name
-- [x] Harden open
-- [x] Do weak open config params
-- [x] Handle useUserPassword config parameter
-- [x] Check if mount dir is a is_symlink()
-- [x] logout close
-- [x] harden logout close
+- [ ] If bad password, ask 3 times more
 - [ ] Handle db creation and usage
 - [/] device actions
 	- [ ] resize
@@ -39,3 +33,4 @@
 	- [ ] Create hidden directory
 	- [ ] Add config skel 
 	- [ ] Add calling line in /etc/common-auth
+	- [ ] Add calling line in /etc/common-session
