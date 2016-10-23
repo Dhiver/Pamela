@@ -8,12 +8,11 @@
 
 ## Tasks
 
-- [ ] Check for duplicate container name and mount point
 - [ ] Write cli_db_manage.py
+	- [ ] Delete container
+	- [ ] Change container password
 	- [ ] Ncurse interface
-	- [ ] If 'useUserPassword' option is set
-		- [ ] Handle usage
-- [ ] Change container password
+
 - [ ] Write a pam_exec.so rapidly
 - [ ] Create a deb package
 	- [ ] Where to put the code

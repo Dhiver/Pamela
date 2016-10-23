@@ -35,6 +35,7 @@ class ParseConfig:
     def isValid(self):
         if not self.data:
             return False
+        mountDirs = list()
         for container in self.data:
             if '../' in container or '/..' in container:
                 logger.log(logging.ERROR,
@@ -63,6 +64,11 @@ class ParseConfig:
                                    "Error in {} config, '{}' path must not contains '..'"
                                    .format(container, key[0]))
                         return False
+                    if self.data[container][key[0]] in mountDirs:
+                        logger.log(logging.ERROR, "Error in {} config, duplicate mount dir '{}'"
+                                   .format(container, self.data[container][key[0]]))
+                        return False
+                    mountDirs.append(self.data[container][key[0]])
                 if key[0] == 'sizeInMB':
                     if self.data[container][key[0]] < DEFAULT_MIN_CONTAINER_SIZE:
                         logger.log(logging.ERROR,
