@@ -14,16 +14,17 @@ class SQLCipher:
         try:
             self.conn = sqlite.connect(self.path)
             self.conn.row_factory = sqlite.Row
+        except Exception as e:
+            logger.log(logging.ERROR, "Connecting to database error: {}"
+                       .format(e))
+            self.cursor = None
+            return False
+        with self.conn:
             self.cursor = self.conn.cursor()
             self.cursor.execute("PRAGMA key='{}'".format(key))
-        except Exception as e:
-            logger.log(logging.ERROR,
-                       "Connecting to database error: {}"
-                       .format(e))
-            return False
         return True
 
-    def getCursor(self, request):
+    def getCursor(self):
         return self.cursor
 
     def disconnect(self):
@@ -31,8 +32,7 @@ class SQLCipher:
             self.conn.commit()
             self.cursor.close()
         except Exception as e:
-            logger.log(logging.ERROR,
-                       "Disconnecting from database error: {}"
+            logger.log(logging.ERROR, "Disconnecting from database error: {}"
                        .format(e))
             return False
         return True
