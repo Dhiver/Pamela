@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 from pathlib import PosixPath
+from shutil import chown
 import LUKSDevice
 import ParseConfig
 from luksypam_log import logger
@@ -47,8 +48,7 @@ class LuksyPam:
 
     def isLuksypamEnabled(self):
         if not PosixPath(self.USER_ROOT_FOLDER[:-1]).is_dir() or not PosixPath(self.USER_CONFIG_FILE).is_file():
-            logger.log(logging.INFO,
-                       "Not activated, cant find {} neither {}"
+            logger.log(logging.INFO, "Not activated, cant find {} neither {}"
                        .format(self.USER_ROOT_FOLDER[:-1], self.USER_CONFIG_FILE))
             return False
         return True
@@ -58,8 +58,7 @@ class LuksyPam:
         if not configs.parse() or configs.isEmpty() or not configs.isValid():
             return False
         configs = configs.getContent()
-        logger.log(logging.INFO,
-                   "Config file for user '{}' found and valid".
+        logger.log(logging.INFO, "Config file for user '{}' found and valid".
                    format(self.USER_NAME))
         for name in configs:
             if configs[name]["enable"]:
@@ -74,6 +73,13 @@ class LuksyPam:
                 tmpPassword = self.PASSWORD
                 if not container.data.createDevice(
                     container.config["sizeInMB"], tmpPassword, container.config["weak"]):
+                    self.containers.remove(container)
+                    continue
+                try:
+                    chown(currentContainerPath, self.USER_NAME, self.USER_NAME)
+                except Exception as e:
+                    logger.log(logging.ERROR, "Error changing '{}' owner to {}: {}"
+                               .format(currentContainerPath, self.USER_NAME, e))
                     self.containers.remove(container)
                     continue
                 logger.log(logging.INFO, "Container {} created with size {}"
@@ -99,8 +105,8 @@ class LuksyPam:
             if container.created:
                 ret = execShellCmd("mkfs.{} {}".format(FORMAT_DRIVE_IN, currentDevicePath))
                 if ret[0] != 0:
-                    logger.log(logging.ERROR,
-                               "Error formating device {}: {}".format(currentDevicePath, ret[2]))
+                    logger.log(logging.ERROR, "Error formating device {}: {}"
+                               .format(currentDevicePath, ret[2]))
                     self.containers.remove(container)
                     continue
             logger.log(logging.INFO, "Container {} openned successfully".format(container.name))
@@ -135,9 +141,15 @@ class LuksyPam:
                 currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
                 ret = mount(currentDevicePath, currentMountPath, FORMAT_DRIVE_IN)
                 if not ret[0]:
-                    logger.log(logging.ERROR,
-                               "Error mounting {} on {}: {} returned {}"
+                    logger.log(logging.ERROR, "Error mounting {} on {}: {} returned {}"
                                .format(currentDevicePath, currentMountPath, ret[1], ret[0]))
+                    self.containers.remove(container)
+                    continue
+                try:
+                    chown(currentMountPath, self.USER_NAME, self.USER_NAME)
+                except Exception as e:
+                    logger.log(logging.ERROR, "Error changing '{}' owner to {}: {}"
+                               .format(currentMountPath, self.USER_NAME, e))
                     self.containers.remove(container)
                     continue
                 logger.log(logging.INFO, "Container {} mounted".format(container.name))
