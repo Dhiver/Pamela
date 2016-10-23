@@ -8,10 +8,13 @@
 
 ## Tasks
 
-- [ ] Handle 'useUserPassword' option
-	- [ ] If bad password, ask 3 times more
+- [ ] Check for duplicate container name and mount point
+- [ ] Write cli_db_manage.py
+	- [ ] Ncurse interface
+	- [ ] If 'useUserPassword' option is set
+		- [ ] Handle usage
+- [ ] Change container password
 - [ ] Write a pam_exec.so rapidly
-- [ ] Handle db creation and usage
 - [ ] Create a deb package
 	- [ ] Where to put the code
 	- [ ] Create hidden directory
