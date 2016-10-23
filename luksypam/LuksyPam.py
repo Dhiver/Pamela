@@ -48,7 +48,7 @@ class LuksyPam:
         try:
             cur.execute("SELECT count(*) FROM sqlite_master;")
         except Exception as e:
-            logger.log(logging.ERROR, "Error DB {}: {}"
+            logger.log(logging.INFO, "Can not access DB {}: {}"
                       .format(self.DB_PATH, e))
             self.db = None
 
@@ -87,13 +87,24 @@ class LuksyPam:
                 self.containers.append(Container(name, configs[name], LUKSDevice.LUKSDevice(currentContainerPath)))
         return True
 
+    def getVolPasswordFromDB(self, volName):
+        if self.db:
+            cur = self.db.getCursor()
+            cur.execute("SELECT * FROM Containers WHERE Name=?", (volName,))
+            row = cur.fetchone()
+            if row:
+                return row["Password"]
+        return ""
+
     def createContainers(self):
         for container in list(self.containers):
             currentContainerPath = self.USER_ROOT_FOLDER + container.name
             if not PosixPath(currentContainerPath).is_file():
-                tmpPassword = self.PASSWORD
+                pwd = self.PASSWORD
+                if not container.config["useUserPassword"]:
+                    pwd = self.getVolPasswordFromDB(container.name)
                 if not container.data.createDevice(
-                    container.config["sizeInMB"], tmpPassword, container.config["weak"]):
+                    container.config["sizeInMB"], pwd, container.config["weak"]):
                     self.containers.remove(container)
                     continue
                 try:
@@ -116,8 +127,10 @@ class LuksyPam:
     def openContainers(self):
         for container in list(self.containers):
             if not container.data.isOpen():
-                tmpPassword = self.PASSWORD
-                if not container.data.open(tmpPassword):
+                pwd = self.PASSWORD
+                if not container.config["useUserPassword"]:
+                    pwd = self.getVolPasswordFromDB(container.name)
+                if not container.data.open(pwd):
                     self.containers.remove(container)
                     continue
             deviceInfos = container.data.c.info()
@@ -190,3 +203,7 @@ class LuksyPam:
     def __del__(self):
         if self.db:
             self.db.disconnect()
+        try:
+            chown(self.DB_PATH, self.USER_NAME, self.USER_NAME)
+        except Exception:
+            pass
