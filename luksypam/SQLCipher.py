@@ -15,8 +15,8 @@ class SQLCipher:
             self.conn = sqlite.connect(self.path)
             self.conn.row_factory = sqlite.Row
         except Exception as e:
-            logger.log(logging.ERROR, "Connecting to database error: {}"
-                       .format(e))
+            logger.log(logging.ERROR, "Connecting to database {} error: {}"
+                       .format(self.path, e))
             self.cursor = None
             return False
         with self.conn:
