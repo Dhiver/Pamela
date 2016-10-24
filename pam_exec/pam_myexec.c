@@ -1,17 +1,20 @@
 #define _GNU_SOURCE
 
 #include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 #include <systemd/sd-journal.h>
 #include <errno.h>
 #include <stdio.h>
 
 #define PAM_SM_AUTH
+#define PAM_SM_ACCOUNT
 #define PAM_SM_SESSION
+#define PAM_SM_PASSWORD
 
 #include <security/pam_modules.h>
-#include <security/pam_appl.h>
 #include <security/pam_ext.h>
 #include <security/_pam_macros.h>
 
@@ -50,6 +53,7 @@ static int	_try_get_password(pam_handle_t *pamh, char **authtok)
 	    ret = PAM_INCOMPLETE;
 	  return (ret);
 	}
+      pam_set_item(pamh, PAM_AUTHTOK, resp);
       *authtok = strndupa(resp, PAM_MAX_RESP_SIZE);
       _pam_drop(resp);
     }
@@ -182,7 +186,8 @@ static void	_mypam_exec(const char **av, char **child_env)
   _exit(ret);
 }
 
-static int	_exec(pam_handle_t *pamh, const char **av)
+static int	_exec(pam_handle_t *pamh, const char **av,
+		      const char *pam_type)
 {
   char		**child_env;
   pid_t		pid;
@@ -204,7 +209,7 @@ static int	_exec(pam_handle_t *pamh, const char **av)
   else
     {
       _fds_redirections(fds);
-      _build_child_env("auth", pamh, &child_env);
+      _build_child_env(pam_type, pamh, &child_env);
       _mypam_exec(av, child_env);
     }
   return (PAM_SUCCESS);
@@ -218,7 +223,7 @@ PAM_EXTERN int	pam_sm_authenticate(pam_handle_t *pamh, int flags,
   (void)flags;
   if ((ret = _check_argv(ac, av)) != PAM_SUCCESS)
     return (ret);
-  if ((ret = _exec(pamh, av)) != PAM_SUCCESS)
+  if ((ret = _exec(pamh, av, "auth")) != PAM_SUCCESS)
     return (ret);
   return (PAM_SUCCESS);
 }
@@ -230,7 +235,7 @@ PAM_EXTERN int	pam_sm_setcred(pam_handle_t *pamh, int flags,
   (void)flags;
   (void)ac;
   (void)av;
-  return (PAM_SUCCESS);
+  return (PAM_IGNORE);
 }
 
 PAM_EXTERN int	pam_sm_acct_mgmt(pam_handle_t *pamh, int flags,
@@ -256,10 +261,13 @@ PAM_EXTERN int	pam_sm_open_session(pam_handle_t *pamh, int flags,
 PAM_EXTERN int	pam_sm_close_session(pam_handle_t *pamh, int flags,
 				    int ac, const char **av)
 {
-  (void)pamh;
+  int		ret;
+
   (void)flags;
-  (void)ac;
-  (void)av;
+  if ((ret = _check_argv(ac, av)) != PAM_SUCCESS)
+    return (ret);
+  if ((ret = _exec(pamh, av, "close_session")) != PAM_SUCCESS)
+    return (ret);
   return (PAM_SUCCESS);
 }
 
@@ -267,8 +275,8 @@ PAM_EXTERN int	pam_sm_chauthtok(pam_handle_t *pamh, int flags,
 				int ac, const char **av)
 {
   (void)pamh;
-  (void)flags;
   (void)ac;
   (void)av;
-  return (PAM_SERVICE_ERR);
+  (void)flags;
+  return (PAM_SUCCESS);
 }
