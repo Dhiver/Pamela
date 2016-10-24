@@ -3,7 +3,7 @@
 import pycryptsetup
 from pycryptsetup import CRYPT_DEBUG_ALL, CRYPT_DEBUG_NONE
 import logging
-from pathlib import Path
+from pathlib import PosixPath
 from hashlib import sha256
 import os
 from luksypam_log import logger
@@ -45,7 +45,7 @@ class LUKSDevice:
         self.name = sha256(self.path.encode()).hexdigest()
 
         try:
-            self.path = str(Path(self.path).resolve())
+            self.path = str(PosixPath(self.path).resolve())
         except Exception as e:
             log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
                            "Can't get absolute path for '{}': {}"
@@ -71,8 +71,10 @@ class LUKSDevice:
         return True
 
     def isOpen(self):
-        status = self.c.status()
-        return status == pycryptsetup.CRYPT_ACTIVE or status == pycryptsetup.CRYPT_BUSY
+        if self.c and PosixPath(self.path).is_file:
+            status = self.c.status()
+            return status == pycryptsetup.CRYPT_ACTIVE or status == pycryptsetup.CRYPT_BUSY
+        return False
 
     def open(self, passphrase):
         """ Open a LUKS device """
