@@ -158,7 +158,7 @@ static void	_build_child_env(const char *pam_type, pam_handle_t *pamh,
       sd_journal_print(LOG_ERR, "Prepare environment failed: %s", strerror(err_sav));
       _exit(ENOMEM);
     }
-  *child_env[0] = envstr;
+  (*child_env)[0] = envstr;
   if (asprintf(&envstr, "PAM_TYPE=%s", pam_type) < 0)
     {
       err_sav = errno;
@@ -166,8 +166,8 @@ static void	_build_child_env(const char *pam_type, pam_handle_t *pamh,
       sd_journal_print(LOG_ERR, "Prepare environment failed: %s", strerror(err_sav));
       _exit(ENOMEM);
     }
-  *child_env[1] = envstr;
-  *child_env[2] = NULL;
+  (*child_env)[1] = envstr;
+  (*child_env)[2] = NULL;
 }
 
 static void	_mypam_exec(const char **av, char **child_env)
