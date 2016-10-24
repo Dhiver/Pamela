@@ -39,7 +39,5 @@ inst.initContainers()
 inst.umountContainers()
 inst.closeContainers()
 
-# if not inst.removeContainers():
-
 logger.log(logging.INFO, "close_session OK")
 sys.exit(0)
