@@ -65,6 +65,10 @@ class LuksyPam:
         if self.db:
             cur = self.db.getCursor()
             cur.execute("CREATE TABLE IF NOT EXISTS Containers(Name TEXT PRIMARY KEY, Password TEXT)")
+        try:
+            chown(self.DB_PATH, self.USER_NAME, self.USER_NAME)
+        except Exception:
+            pass
         return True
 
     def isLuksypamEnabled(self):
@@ -137,6 +141,14 @@ class LuksyPam:
             logger.log(logging.DEBUG, "Container {} infos: {}".format(container.name, deviceInfos))
             currentDevicePath = deviceInfos["dir"] + "/" + deviceInfos["name"]
             if container.created:
+                currentMountPath = self.USER_HOME + "/" + container.config["mountDir"]
+                if os.path.ismount(currentMountPath):
+                    ret = umount(currentMountPath)
+                    if not ret[0]:
+                        logger.log(logging.ERROR, "Error umounting {}: {} returned {}"
+                                   .format(currentMountPath, ret[1], ret[0]))
+                        self.containers.remove(container)
+                        continue
                 ret = execShellCmd("mkfs.{} {}".format(FORMAT_DRIVE_IN, currentDevicePath))
                 if ret[0] != 0:
                     logger.log(logging.ERROR, "Error formating device {}: {}"
