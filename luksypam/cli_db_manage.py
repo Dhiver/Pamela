@@ -8,6 +8,35 @@ import LuksyPam
 from SQLCipher import SQLCipher
 from constants import *
 
+def changeContainerPassword(luksypam, container):
+    cur = luksypam.db.getCursor()
+    cur.execute("SELECT * FROM Containers WHERE Name=?", (container.name,))
+    row = cur.fetchone()
+    try:
+        newPassword = getpass("Enter new password for {} (Ctrl-d to cancel): "
+                           .format(container.name))
+    except EOFError as e:
+        print()
+        return
+    except Exception as e:
+        print("Error while entering {} password: {}"
+              .format(container.name, e), file=sys.stderr)
+        return
+    if row is None:
+        print("Add new entry : {} : {}".format(container.name, newPassword))
+        ins = (container.name, newPassword)
+        cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
+    else:
+        if container.data.init():
+            if container.data.changePassword(row["Password"], newPassword):
+                cur.execute("UPDATE Containers SET Password=? WHERE Name=?",
+                            (newPassword, row["Name"]))
+                print("Password changed")
+
+def removeContainer(container):
+    if container.data.wipe():
+        print("{} wiped!".format(container.name), file=sys.stderr)
+
 username = getuser()
 password = getpass("Enter {} password: ".format(username))
 
@@ -19,30 +48,22 @@ if not luksypam.db:
     print("Can not initialize DB", file=sys.stderr)
     sys.exit(1)
 
-cur = luksypam.db.getCursor()
-
 for container in luksypam.containers:
-    if container.config["enable"] and not container.config["useUserPassword"]:
-        cur.execute("SELECT * FROM Containers WHERE Name=?", (container.name,))
-        row = cur.fetchone()
-        try:
-            password = getpass("Enter new password for {} (Ctrl-d to cancel): "
-                               .format(container.name))
-        except EOFError as e:
-            print()
-            continue
-        except Exception as e:
-            print("Error while entering {} password: {}"
-                  .format(container.name, e), file=sys.stderr)
-            continue
-        if row is None:
-            ins = (container.name, password)
-            cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
-        else:
-            if row["Name"] == container.name:
-                if container.data.init():
-                    if container.data.changePassword(row["Password"], password):
-                        cur.execute("UPDATE Containers SET Password=? WHERE Name=?", (password, row["Name"]))
+    if container.config["enable"]:
+        while True:
+            choice = ''
+            try:
+                choice = input("{} - Delete (d) or change password (c) or do nothing (n) [c/d/n] ".format(container.name))
+            except EOFError:
+                sys.exit(1)
+            if choice == 'c':
+                changeContainerPassword(luksypam, container)
+                break
+            if choice == 'd':
+                removeContainer(container)
+                break
+            if choice == 'n':
+                break
 
 luksypam.db.disconnect()
 
