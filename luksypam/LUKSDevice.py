@@ -122,12 +122,6 @@ class LUKSDevice:
     def wipe(self):
         """ Wipe a LUKS device by overwriting volume header
         Implement section 5.4 of https://gitlab.com/cryptsetup/cryptsetup/wikis/FrequentlyAskedQuestions"""
-        if self.isOpen():
-            log_to_systemd(pycryptsetup.CRYPT_LOG_ERROR,
-                           "Close the device {} before wiping".
-                           format(self.path))
-            return False
-
         try:
             size = os.path.getsize(self.path)
         except Exception as e:
