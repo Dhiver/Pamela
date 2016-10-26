@@ -23,9 +23,13 @@ def changeContainerPassword(luksypam, container):
               .format(container.name, e), file=sys.stderr)
         return
     if row is None:
-        print("Add new entry : {} : {}".format(container.name, newPassword))
         ins = (container.name, newPassword)
         cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
+        if container.data.init():
+            if container.data.changePassword("", newPassword):
+                cur.execute("UPDATE Containers SET Password=? WHERE Name=?",
+                            (newPassword, container.name))
+                print("Password changed")
     else:
         if container.data.init():
             if container.data.changePassword(row["Password"], newPassword):
