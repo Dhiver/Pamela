@@ -25,11 +25,6 @@ def changeContainerPassword(luksypam, container):
     if row is None:
         ins = (container.name, newPassword)
         cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
-        if container.data.init():
-            if container.data.changePassword("", newPassword):
-                cur.execute("UPDATE Containers SET Password=? WHERE Name=?",
-                            (newPassword, container.name))
-                print("Password changed")
     else:
         if container.data.init():
             if container.data.changePassword(row["Password"], newPassword):
