@@ -27,10 +27,10 @@ def changeContainerPassword(luksypam, container):
         cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
     else:
         if container.data.init():
-            if container.data.changePassword(row["Password"], newPassword):
-                cur.execute("UPDATE Containers SET Password=? WHERE Name=?",
-                            (newPassword, row["Name"]))
-                print("Password changed")
+            container.data.changePassword(row["Password"], newPassword)
+            cur.execute("UPDATE Containers SET Password=? WHERE Name=?",
+                        (newPassword, row["Name"]))
+            print("Password changed")
 
 def removeContainer(container):
     if container.data.wipe():
