@@ -8,7 +8,7 @@ import LuksyPam
 from SQLCipher import SQLCipher
 from constants import *
 
-def changeContainerPassword(luksypam, container):
+def changeContainerPassword(luksypam, container, password, pwdInDb):
     cur = luksypam.db.getCursor()
     cur.execute("SELECT * FROM Containers WHERE Name=?", (container.name,))
     row = cur.fetchone()
@@ -27,7 +27,7 @@ def changeContainerPassword(luksypam, container):
         cur.execute("INSERT INTO Containers (Name, Password) VALUES (?, ?)", ins)
     else:
         if container.data.init():
-            container.data.changePassword(row["Password"], newPassword)
+            container.data.changePassword(row["Password"] if pwdInDb else password, newPassword)
             cur.execute("UPDATE Containers SET Password=? WHERE Name=?",
                         (newPassword, row["Name"]))
             print("Password changed")
@@ -47,6 +47,11 @@ if not luksypam.db:
     print("Can not initialize DB", file=sys.stderr)
     sys.exit(1)
 
+pwdInDb = False
+
+if len(sys.argc) > 1 and sys.argv[1] == 'db':
+    pwdInDb = True
+
 for container in luksypam.containers:
     if container.config["enable"]:
         while True:
@@ -56,7 +61,7 @@ for container in luksypam.containers:
             except EOFError:
                 sys.exit(1)
             if choice == 'c':
-                changeContainerPassword(luksypam, container)
+                changeContainerPassword(luksypam, container, password, pwdInDb)
                 break
             if choice == 'd':
                 removeContainer(container)
