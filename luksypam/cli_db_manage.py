@@ -49,7 +49,7 @@ if not luksypam.db:
 
 pwdInDb = False
 
-if len(sys.argc) > 1 and sys.argv[1] == 'db':
+if len(sys.argv) > 1 and sys.argv[1] == 'db':
     pwdInDb = True
 
 for container in luksypam.containers:
