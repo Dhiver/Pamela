@@ -1,3 +1,9 @@
+# Pamela
+
+School project where we had to develop a PAM module.
+
+This module decrypts a file in the users' home directories when the users logged in.
+
 ## Requirements
 
 Add backports
