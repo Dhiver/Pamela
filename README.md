@@ -19,13 +19,13 @@ Add backports
 ```
 
 ```bash
-cd /lib/x86_64-linux-gnu/security/
-git clone git@git.epitech.eu:/dhiver_b/Pamela luksypam
+$ cd /lib/x86_64-linux-gnu/security/
+$ git clone git@git.epitech.eu:/dhiver_b/Pamela luksypam
 ```
 
 Install `pycryptsetup` python module
 ```bash
-cd pycryptsetup
+$ cd pycryptsetup
 # pip3 install -e .
 ```
 
@@ -41,22 +41,19 @@ session required pam_exec.so /lib/x86_64-linux-gnu/security/luksypam/luksypam/lu
 
 ## Bonus
 
-* Création du conteneur + fichier de conf à la volée.
-* Plug module PAM à la session SSH.
-* Utilisation de systemd pour remonter les infos. avec mode verbeux ou non
-* Il y a un changement du mot de passe du conteneur indépendant du pass unix au travers d'un CLI
-* Multi conteneurs.
-* Changement du point de montage + nom du volume. 
-* Python3 bitch
+* Container and configuration file creation on the fly
+* SSH capable
+* Logs via systemd + verbose mode
+* A CLI tool is provided to change the container password
+* Multi-containers
+* Mountpoint and name of the volume can be set
+* In Python3!
 * Build module pycryptsetup
-* Modification du module pycryptsetup (algo de hachage + True random)
-* Gestion de profils (weak or not?)
-* Personnalisation possible au travers de constantes
-* Génération d'un conteneur vide rempli aléatoirement
-* Effacement sécurisé des conteneurs
-* Base de données pour stocker les mots de passes voulus
-* Spécifier la taille d'un nouveau conteneur
-* Gestion sécurité avancé (le .. dans les paths)
-* Validateur de configuration
-* Possibilité de désactiver des conteneurs
-* Recode de pam_exec.so
+* Modification added to the pycryptsetup module (hash algorithm + True random)
+* Profile management (weak or not?)
+* Generated container are filled with random values
+* Secure deletion
+* Passwords stored in a database
+* Container size can be specified
+* Containers can be disabled
+* pam\_exec.so recode
